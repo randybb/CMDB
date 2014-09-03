@@ -299,6 +299,7 @@ def classify_node(string)
   end
 end
 
+=begin
 namespace :device do
   task :get_configuration => :environment do
     puts "== Downloading configurations"
@@ -360,3 +361,4 @@ namespace :device do
     end
   end
 end
+=end

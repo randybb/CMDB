@@ -9,7 +9,7 @@
 
   <tbody>
   <% @sites.each do |site| %>
-      <% d = site[:cmdb]%>
+      <% d = site.cmdb %>
       <tr>
         <td><%= link_to d[:name], "/cmdb/sites/#{d[:infrid]}" %></td>
       </tr>

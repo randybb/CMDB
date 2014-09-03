@@ -1,15 +1,15 @@
 class Cmdb::SitesController < ApplicationController
   def index
-    @sites = CouchPotato.database.view(Site.all)
+    @sites = Site
   end
 
   def show
-    site = CouchPotato.database.load(params[:id])
+    site = Site.where(infrid: params[:id])
     if site.nil?
       render file: "public/404.html", status: :not_found
     else
-      @site = site.to_hash
-      @devices = CouchPotato.database.view(Equipment.for_sitid(:key => site._id.to_i))
+      @site = site.first
+      @devices = Equipment.where(sitid: params[:id])
     end
   end
 end

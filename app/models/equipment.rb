@@ -3,6 +3,7 @@ class Equipment
   include Mongoid::Timestamps
 
   field :infrid, type: Integer
+  field :sitid, type: Integer
   field :_id, type: String, default: -> { infrid }
   field :orgid, type: Integer
   field :name, type: String

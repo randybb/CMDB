@@ -38,6 +38,7 @@ def get_records_from_cmdb(query_class)
                   infr = Site.new
                 when 'Equipment'
                   infr = Equipment.new
+                  infr.sitid = record[:sitid]
                 when 'Line' then
                   infr = Line.new
                 when 'Subnet' then
