@@ -1,0 +1,90 @@
+= Notes for CMDB and CouchDB
+
+== CMDB
+=== Equipment
+- doc: infrid,ovsd_search_code,name,IP,IP_mask,real_IP,real_IP_mask,default_gw,service_type,type,description,sitid,sitid_value,region,region_value,criticality,impact,brand,model_nb,part_nb,serial_nb,order_nb,os_version,mac_addr,floor,snmp_get_,snmp_set_,first_level_pwd_,second_level_pwd_,step,up,up_value,owner_org_value,sys_handle,business_group,business_category,creationdate,lastchangedate
+- cmdb: name,up_value,IP,IP_mask,real_IP,real_IP_mask,default_gw,alias_equipment,peerid,sitid_value,floor,region_value,criticality,impact,service_type,category,type,description,brand,model_nb,complexity,sys_object_id,part_nb,serial_nb,asset_owner,asset_id,sys_handle,maintenance,order_nb,nb_ports,os_version,hw_version,memory,mac_addr,snmp_get_,snmp_set_,snmp_v3_,first_level_pwd_,second_level_pwd_,step,owner_org_value,business_group,business_category,billed_location,comment,ovsd_search_code,creationdate,lastchangedate,first_mtp_date,last_obsolete_date
+- cmdb_strings:
+- merged: infrid,name,up,up_value,IP,IP_mask,real_IP,real_IP_mask,default_gw,alias_equipment,peerid,sitid,sitid_value,floor,region,region_value,criticality,impact,service_type,category,type,description,brand,model_nb,complexity,sys_object_id,part_nb,serial_nb,asset_owner,asset_id,sys_handle,maintenance,order_nb,nb_ports,os_version,hw_version,memory,mac_addr,snmp_get_,snmp_set_,snmp_v3_,first_level_pwd_,second_level_pwd_,step,owner_org_value,business_group,business_category,billed_location,comment,ovsd_search_code,creationdate,lastchangedate,first_mtp_date,last_obsolete_date
+
+=== Site
+- doc: infrid,name,alias,type,site_acro,country,city,region,region_value,empl_nb,address,open_hours,timezone,step,ovsd_search_code,owner_org_value,business_group,business_category,creationdate,lastchangedate
+- cmdb: name,up_value,alias,type,site_acro,region_value,country,the_state,city,zip_code,address,timezone,empl_nb,open_hours,step,owner_org_value,business_group,business_category,ovsd_search_code,creationdate,lastchangedate,first_mtp_date,last_obsolete_date
+- cmdb_strings:
+- merged: infrid,name,up_value,alias,type,site_acro,region,region_value,country,the_state,city,zip_code,address,timezone,empl_nb,open_hours,step,owner_org_value,business_group,business_category,ovsd_search_code,creationdate,lastchangedate,first_mtp_date,last_obsolete_date
+
+=== Region
+Not needed for SKF
+- doc: nil
+- cmdb: name,type,step,owner_org_value,business_group,business_category,creationdate,lastchangedate,first_mtp_date,last_obsolete_date
+- cmdb_strings:
+- merged:
+
+=== Line
+Not needed for SKF
+
+- doc: infrid,name,type,sitid1,sitid1_value,sitid2,sitid2_value,region,region_value,
+       criticality,impact,capacity_num,capacity,acro_prov1_value,
+       ref_site1,acro_prov2_value,ref_site2,used_for,cost_monthly,
+       cost_currency,cost_comment,ordering_info,delivery_date,
+       renewal_date,cancellation_date,step,up,up_value,up2,up2_value,owner_org_value,
+       business_group,business_category,creationdate,lastchangedate
+- cmdb: name,type,sitid1_value,sitid2_value,region_value,criticality,impact,capacity_num,capacity,acro_prov1_value,ref_site1,acro_prov2_value,ref_site2,used_for,delivery_date,renewal_date,cancellation_date,step,up_value,up2,owner_org_value,business_group,business_category,creationdate,lastchangedate,first_mtp_date,last_obsolete_date
+- cmdb_strings:
+- merged: infrid,name,type,sitid1,sitid1_value,sitid2,sitid2_value,region,region_value,criticality,impact,capacity_num,capacity,acro_prov1_value,ref_site1,acro_prov2_value,ref_site2,used_for,cost_monthly,cost_currency,cost_comment,ordering_info,delivery_date,renewal_date,cancellation_date,step,up,up_value,up2,up2_value,owner_org_value,business_group,business_category,creationdate,lastchangedate,first_mtp_date,last_obsolete_date
+
+=== Subnet
+- doc: infrid,name,mask,type,description,lineid,lineid_value,sitid,sitid_value,
+       region,region_value,step,owner_org_value,business_group,business_category,
+       creationdate,lastchangedate
+- cmdb: name,mask,type,description,lineid_value,sitid_value,region_value,step,owner_org_value,business_group,business_category,creationdate,lastchangedate,first_mtp_date,last_obsolete_date
+- cmdb_strings:
+- merged: infrid,name,mask,type,description,lineid,lineid_value,sitid,sitid_value,region,region_value,step,owner_org_value,business_group,business_category,creationdate,lastchangedate,first_mtp_date,last_obsolete_date
+
+=== Interface
+connectinfo,connectport values are with html code and are not escaped
+
+- doc: infrid,name,ifcanonicalname,deviceid,deviceid_value,IP,IP_mask,
+       real_IP,real_IP_mask,type,criticality,impact,connectid,connectinfo,connectport,
+       lineid,lineid_value,duplex_config,capacity_num,snmp_type,ifindex,acl_in,acl_out,
+       model_nb,part_nb,mac_addr,first_level_pwd_,step,owner_org_value,business_group,
+       business_category,creationdate,lastchangedate
+- cmdb: name,ifcanonicalname,deviceid_value,IP,IP_mask,NAT_IP,type,criticality,impact,connectid,connectinfo,connectport,lineid_value,duplex_config,capacity_num,snmp_type,ifindex,acl_in,acl_out,model_nb,part_nb,mac_addr,first_level_pwd_,step,owner_org_value,business_group,business_category,creationdate,lastchangedate,first_mtp_date,last_obsolete_date
+- cmdb_strings:
+- merged: infrid,name,ifcanonicalname,deviceid,deviceid_value,IP,IP_mask,real_IP,real_IP_mask,NAT_IP,type,criticality,impact,connectid,connectinfo,connectport,lineid,lineid_value,duplex_config,capacity_num,snmp_type,ifindex,acl_in,acl_out,model_nb,part_nb,mac_addr,first_level_pwd_,step,owner_org_value,business_group,business_category,creationdate,lastchangedate,first_mtp_date,last_obsolete_date
+
+=== System
+Not needed for SKF
+
+- doc: infrid,name,IP,IP_mask,real_IP,real_IP_mask,type,os,os_release,sitid,
+       sitid_value,region,region_value,criticality,impact,package,login_,step,owner_org_value,
+       business_group,business_category,creationdate,lastchangedate
+- cmdb: infrid,name,IP,IP_mask,real_IP,real_IP_mask,type,os,os_release,sitid,sitid_value,region,region_value,criticality,impact,package,login_,step,owner_org_value,business_group,business_category,billed_location,creationdate,lastchangedate,first_mtp_date,last_obsolete_date
+- cmdb_strings:
+- merged:
+
+=== Solution
+We have 200 solutions in SKF, sync from ESL but not linked :(
+
+- doc: nil
+- cmdb: name,sub_type,type,coverage,sitid_value,region_value,criticality,description,allowed_link_types,admin_,step,up_value,owner_org_value,business_group,business_category,creationdate,lastchangedate,first_mtp_date,last_obsolete_date
+- cmdb_strings:
+- merged: infrid,name,sub_type,type,coverage,sitid,sitid_value,region,region_value,criticality,description,allowed_link_types,admin_,step,up,up_value,owner_org_value,business_group,business_category,creationdate,lastchangedate,first_mtp_date,last_obsolete_date
+
+== Errors
+- {"error":"not_found","reason":"deleted"}
+- {"error":"not_found","reason":"missing"}
+
+== CouchDB
+
+=== Views
+
+[source, javascript]
+.Find a string
+----
+function(doc) {
+  if(doc.name.match(/skfcz/)) {
+    emit(doc.name, doc);
+  }
+}
+----

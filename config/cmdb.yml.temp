@@ -1,0 +1,18 @@
+defaults: &defaults
+  username: ''
+  password: ''
+  uri: 'http://r2.grenoble.hp.com/r2_admin/list_infra/'
+  query_site: '/?itype=Site&owner_org_acr=88&fields=infrid,name,up,up_value,alias,type,site_acro,region,region_value,country,the_state,city,zip_code,address,timezone,empl_nb,open_hours,step,owner_org_value,business_group,business_category,ovsd_search_code,creationdate,lastchangedate,first_mtp_date,last_obsolete_date'
+  query_equipment: '/?type=Equipment&owner_org_acr=88&fields=infrid,name,up,up_value,IP,IP_mask,real_IP,real_IP_mask,default_gw,alias_equipment,peerid,sitid,sitid_value,floor,region,region_value,criticality,impact,service_type,category,type,description,brand,model_nb,complexity,sys_object_id,part_nb,serial_nb,asset_owner,asset_id,sys_handle,maintenance,order_nb,nb_ports,os_version,hw_version,memory,mac_addr,snmp_get_,snmp_set_,snmp_v3_,first_level_pwd_,second_level_pwd_,step,owner_org_value,business_group,business_category,billed_location,comment,ovsd_search_code,creationdate,lastchangedate,first_mtp_date,last_obsolete_date'
+  query_line: '/?itype=Line&owner_org_acr=88&fields=infrid,name,type,sitid1,sitid1_value,sitid2,sitid2_value,region,region_value,criticality,impact,capacity_num,capacity,acro_prov1_value,ref_site1,acro_prov2_value,ref_site2,used_for,cost_monthly,cost_currency,cost_comment,ordering_info,delivery_date,renewal_date,cancellation_date,step,up,up_value,up2,up2_value,owner_org_value,business_group,business_category,creationdate,lastchangedate,first_mtp_date,last_obsolete_date'
+  query_subnet: '/?itype=Subnet&owner_org_acr=88&fields=infrid,name,mask,type,description,lineid,lineid_value,sitid,sitid_value,region,region_value,step,owner_org_value,business_group,business_category,creationdate,lastchangedate,first_mtp_date,last_obsolete_date'
+
+
+development:
+  <<: *defaults
+
+test:
+  <<: *defaults
+
+production:
+  <<: *defaults

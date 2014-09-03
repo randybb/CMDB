@@ -1,0 +1,36 @@
+<h1>CMDB: Devices</h1>
+
+<table class="table table-striped table-condensed">
+  <thead>
+  <tr>
+    <th>Name</th>
+    <th>Site</th>
+    <th>Model</th>
+    <th>IP Addr</th>
+    <th>Mgmt Ip Addr</th>
+    <th>Step</th>
+    <th></th>
+  </tr>
+  </thead>
+
+  <tbody>
+  <% @devices.each do |device| %>
+  <% d = device[:cmdb]%>
+      <tr>
+        <td><%= link_to d[:name], "/cmdb/devices/#{d[:infrid]}" %> <a href="https://r2.grenoble.hp.com/operations/direct/infra/<%= d[:infrid] %>"><span class="fa fa-external-link"></span></a></td>
+        <td><%= link_to d[:sitid_value], "/cmdb/sites/#{d[:sitid]}" %> <a href="https://r2.grenoble.hp.com/operations/direct/infra/<%= d[:sitid] %>"><span class="fa fa-external-link"></span></a></td>
+        <td><%= d["model_nb"] %></td>
+        <td><%= d["real_ip"] %></td>
+        <td><%= d["ip"] %></td>
+        <td><%= d["step"] %></td>
+        <td>
+          <%= link_to('<span class="fa fa-file-text"></span>'.html_safe, {controller: "cmdb/devices", id: device[:_id], action: "show_configuration"}) if device._attachments? && !device._attachments["configuration"].nil? %>
+          <%= link_to('<span class="fa fa-list-ol"></span>'.html_safe, {controller: "cmdb/devices", id: device[:_id], action: "show_interfaces"}) if device.device && device.device[:interfaces] %>
+          <%= link_to('<span class="fa fa-tree"></span>'.html_safe, {controller: "cmdb/devices", id: device[:_id], action: "show_cdp"}) if device.device && device.device[:neighbors] && device.device[:neighbors][:cdp] %>
+        </td>
+      </tr>
+  <% end %>
+  </tbody>
+</table>
+
+<br>
