@@ -1,13 +1,16 @@
 class Equipment
-  include CouchPotato::Persistence
-  property :_id
-  property :orgid
-  property :name
-  property :_attachments
-  property :timestamps
-  property :device
-  property :cmdb
+  include Mongoid::Document
+  include Mongoid::Timestamps
 
+  field :infrid, type: Integer
+  field :_id, type: String, default: -> { infrid }
+  field :orgid, type: Integer
+  field :name, type: String
+  field :cmdb, type: Hash
+  field :timestamps, type: Hash
+  field :device, type: Hash
+
+=begin
   view :all, key: :name, :conditions => 'doc.cmdb'
   view :wlc, key: :name, :conditions => 'doc.cmdb.type == "Wireless Controller"'
   view :test, key: :created_at, :conditions => 'doc.cmdb.type == "Wireless Controller"'
@@ -34,4 +37,5 @@ function(doc){
 }
   },
        :include_docs => true, :type => :custom)
+=end
 end

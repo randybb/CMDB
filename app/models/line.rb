@@ -1,9 +1,10 @@
 class Line
-  include CouchPotato::Persistence
-  property :_id
-  property :orgid
-  property :name
-  property :cmdb
+  include Mongoid::Document
+  include Mongoid::Timestamps
 
-  view :all, key: :name, :conditions => 'doc.cmdb'
+  field :infrid, type: Integer
+  field :_id, type: String, default: -> { infrid }
+  field :orgid, type: Integer
+  field :name, type: String
+  field :cmdb, type: Hash
 end

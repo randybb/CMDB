@@ -5,6 +5,7 @@
 #
 #   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
 #   Mayor.create(name: 'Emanuel', city: cities.first)
+=begin
 require 'csv'
 
 # bugs: https://redmine.tools.emea.hp.com/projects/r2
@@ -92,3 +93,4 @@ get_records_from_cmdb(uri_subnet)
 # get_records_from_cmdb(uri_system)
 # get_records_from_cmdb(uri_region)
 # get_records_from_cmdb(uri_solution)
+=end
