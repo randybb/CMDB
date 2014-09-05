@@ -11,6 +11,14 @@ class Equipment
   field :timestamps, type: Hash
   field :device, type: Hash
 
+  def alias
+    if (!self.cmdb[:alias_equipment] || self.cmdb[:alias_equipment] == "" || self.cmdb[:alias_equipment] == "none")
+      self.name.gsub(".lan.skf.net", "").downcase
+    else
+      self.cmdb[:alias_equipment].downcase
+    end
+  end
+
 =begin
   view :all, key: :name, :conditions => 'doc.cmdb'
   view :wlc, key: :name, :conditions => 'doc.cmdb.type == "Wireless Controller"'

@@ -1,4 +1,6 @@
-<h1>CMDB: Subnets</h1>
+<h1>
+  <small>Subnets</small>
+</h1>
 
 <table class="table table-striped table-condensed">
   <thead>
@@ -12,7 +14,7 @@
 
   <tbody>
   <% @subnets.each do |subnet| %>
-  <% s = subnet[:cmdb]%>
+      <% s = subnet.cmdb %>
       <tr>
         <td><%= link_to s[:name], "/cmdb/subnets/#{s[:infrid]}" %> <a href="https://r2.grenoble.hp.com/operations/direct/infra/<%= s[:infrid] %>"><span class="fa fa-database"></span></a></td>
         <td><%= s[:type] %></td>

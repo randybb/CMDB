@@ -1,6 +1,12 @@
 <% s = @site.cmdb %>
-<h1><small>Site </small><%= s[:name] %> <a href="https://r2.grenoble.hp.com/operations/direct/infra/<%= s[:infrid] %>"><span class="fa fa-external-link"></span></a> <small>id: <%= s[:infrid] %></small></h1>
-<h4><small>Alias </small><%= s[:alias] %> <small>Acronym </small><%= s[:site_acro] %></h4>
+<h1>
+  <small>Site</small> <%= s[:name] %>
+  <a href="https://r2.grenoble.hp.com/operations/direct/infra/<%= s[:infrid] %>"><span class="fa fa-external-link"></span></a>
+  <small>id: <%= s[:infrid] %></small>
+</h1>
+<h4>
+  <small>Alias</small> <%= s[:alias] %>
+  <small>Acronym</small> <%= s[:site_acro] %></h4>
 
 <table class="table table-striped table-condensed">
   <tbody>

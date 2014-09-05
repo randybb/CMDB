@@ -1,9 +1,14 @@
-<% d = @device[:cmdb] %>
-<h1><small>Device </small><%= d[:name] %> <a href="https://r2.grenoble.hp.com/operations/direct/infra/<%= d[:name] %>"><span class="fa fa-external-link"></span></a> <small>id: <%= d[:infrid] %></small></h1>
-<h4><small>Alias </small><%= d[:alias_equipment] %></h4>
+<% d = @device.cmdb %>
+<h1>
+  <small>Device</small> <%= d[:name] %>
+  <a href="https://r2.grenoble.hp.com/operations/direct/infra/<%= d[:infrid] %>"><span class="fa fa-external-link"></span></a>
+  <small>id: <%= d[:infrid] %></small>
+</h1>
+<h4>
+  <small>Alias</small> <%= d[:alias_equipment] %></h4>
 <p>
-<%= link_to('<span class="fa fa-file-text"></span> Configuration'.html_safe, {controller: "cmdb/devices", id: @device[:_id], action: "show_configuration"}) if @device._attachments? && !@device._attachments["configuration"].nil? %>
-<%= link_to(' | <span class="fa fa-list-ol"></span> Show Interfaces'.html_safe, {controller: "cmdb/devices", id: @device[:_id], action: "show_interfaces"}) if @device.device && @device.device[:interfaces] %>
+<%# = link_to('<span class="fa fa-file-text"></span> Configuration'.html_safe, {controller: "cmdb/devices", id: @device[:_id], action: "show_configuration"}) if @device._attachments? && !@device._attachments["configuration"].nil? %>
+  <%= link_to(' | <span class="fa fa-list-ol"></span> Show Interfaces'.html_safe, {controller: "cmdb/devices", id: @device[:_id], action: "show_interfaces"}) if @device.device && @device.device[:interfaces] %>
 <%= link_to(' | <span class="fa fa-tree"></span> Show CDP'.html_safe, {controller: "cmdb/devices", id: @device[:_id], action: "show_cdp"}) if @device.device && @device.device[:neighbors] && @device.device[:neighbors][:cdp] %>
 </p>
 <table class="table table-striped table-condensed">
@@ -47,8 +52,21 @@
   <tr><th>Business Group / Category</th><td><%= d[:business_group] %> / <%= d[:business_category] %></td></tr>
   <tr><th>Billed location</th><td><%= d[:billed_location] %></td></tr>
   <tr><th>Comment</th><td><%= d[:comment] %></td></tr>
-  <tr><th>Created at | Modified at</th><td><%= DateTime.parse(d[:creationdate]).to_s(:long) %> | <%= DateTime.parse(d[:lastchangedate]).to_s(:long) %></td></tr>
-  <% ( %><tr><th>Moved to production</th><td><%= DateTime.parse(d[:first_mtp_date]).to_s(:long) %></td></tr><% ) unless (d[:first_mtp_date].nil? || d[:first_mtp_date] == "0000-00-00 00:00:00") %>
-  <% ( %><tr><th>Moved to obsolete</th><td><%= DateTime.parse(d[:last_obsolete_date]).to_s(:long) %></td></tr><% ) unless (d[:last_obsolete_date].nil? || d[:last_obsolete_date] == "0000-00-00 00:00:00") %>
+  <tr>
+    <th>Created at | Modified at</th>
+    <td><%= d[:creationdate].to_s(:long) %> | <%= d[:lastchangedate].to_s(:long) %></td>
+  </tr>
+  <% ( %>
+      <tr>
+      <th>Moved to production</th>
+      <td><%= d[:first_mtp_date].to_s(:long) %></td>
+      </tr>
+  <% ) unless (d[:first_mtp_date].nil? || d[:first_mtp_date] == "0000-00-00 00:00:00") %>
+  <% ( %>
+      <tr>
+      <th>Moved to obsolete</th>
+      <td><%= d[:last_obsolete_date].to_s(:long) %></td>
+      </tr>
+  <% ) unless (d[:last_obsolete_date].nil? || d[:last_obsolete_date] == "0000-00-00 00:00:00") %>
   </tbody>
 </table>

@@ -1,14 +1,14 @@
 class Cmdb::LinesController < ApplicationController
   def index
-    @lines = CouchPotato.database.view(Line.all)
+    @lines = Line
   end
 
   def show
-    line = CouchPotato.database.load(params[:id])
+    line = Line.where(id: params[:id])
     if line.nil?
       render file: "public/404.html", status: :not_found
     else
-      @line = line.to_hash
+      @line = line.first
     end
   end
 end
