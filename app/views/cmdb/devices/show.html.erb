@@ -7,7 +7,7 @@
 <h4>
   <small>Alias</small> <%= d[:alias_equipment] %></h4>
 <p>
-<%# = link_to('<span class="fa fa-file-text"></span> Configuration'.html_safe, {controller: "cmdb/devices", id: @device[:_id], action: "show_configuration"}) if @device._attachments? && !@device._attachments["configuration"].nil? %>
+  <%= link_to('<span class="fa fa-file-text"></span> Configuration'.html_safe, {controller: "cmdb/devices", id: @device[:_id], action: "show_configuration"}) unless @device.file_config.nil? %>
   <%= link_to(' | <span class="fa fa-list-ol"></span> Show Interfaces'.html_safe, {controller: "cmdb/devices", id: @device[:_id], action: "show_interfaces"}) if @device.device && @device.device[:interfaces] %>
 <%= link_to(' | <span class="fa fa-tree"></span> Show CDP'.html_safe, {controller: "cmdb/devices", id: @device[:_id], action: "show_cdp"}) if @device.device && @device.device[:neighbors] && @device.device[:neighbors][:cdp] %>
 </p>

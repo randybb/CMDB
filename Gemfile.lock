@@ -159,6 +159,7 @@ DEPENDENCIES
   jquery-rails
   less-rails
   mongoid
+  moped
   netaddr
   rails (= 4.1.5)
   sass-rails (~> 4.0.3)

@@ -7,17 +7,11 @@ class Equipment
   field :_id, type: String, default: -> { id }
   field :org_id, type: Integer
   field :name, type: String
+  field :alias, type: String
   field :cmdb, type: Hash
   field :timestamps, type: Hash
+  field :file_config, type: BSON::Code
   field :device, type: Hash
-
-  def alias
-    if (!self.cmdb[:alias_equipment] || self.cmdb[:alias_equipment] == "" || self.cmdb[:alias_equipment] == "none")
-      self.name.gsub(".lan.skf.net", "").downcase
-    else
-      self.cmdb[:alias_equipment].downcase
-    end
-  end
 
 =begin
   view :all, key: :name, :conditions => 'doc.cmdb'

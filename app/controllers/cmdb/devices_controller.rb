@@ -17,7 +17,7 @@ class Cmdb::DevicesController < ApplicationController
     if device.nil?
       render file: "public/404.html", status: :not_found
     else
-      configuration = device.file_configuration #.html_safe
+      configuration = device.first.file_config #.html_safe
       render plain: configuration
     end
   end
@@ -36,16 +36,16 @@ class Cmdb::DevicesController < ApplicationController
     if device.nil?
       render file: "public/404.html", status: :not_found
     else
-      @device_name = device.first.cmdb[:name]
+      @device_name = device.first.name
+      @device_id = device.first.id
       @device_cdp = device.first.device[:neighbors][:cdp]
 
       @device_cdp_neighbors = []
       @device_cdp.each do |device|
-        device_name = device.hostname.downcase
+        device_name = device[:hostname].downcase
         infr = Equipment.where(alias: device_name)
-        # infr = CouchPotato.database.view(Equipment.find_by_alias(:key => device_name))
         infrid = ""
-        infrid = infr[0][:_id] unless infr.nil? || infr.size != 1
+        infrid = infr.first[:id] unless infr.nil?
         @device_cdp_neighbors << {device: device_name, infrid: infrid}
       end
       @device = device

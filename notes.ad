@@ -1,5 +1,12 @@
 = Notes for CMDB and CouchDB
 
+----
+rake db:drop
+rake cmdb:update
+rake device:get_configuration
+rake device:parse_configuration
+----
+
 == CMDB
 === Equipment
 - doc: infrid,ovsd_search_code,name,IP,IP_mask,real_IP,real_IP_mask,default_gw,service_type,type,description,sitid,sitid_value,region,region_value,criticality,impact,brand,model_nb,part_nb,serial_nb,order_nb,os_version,mac_addr,floor,snmp_get_,snmp_set_,first_level_pwd_,second_level_pwd_,step,up,up_value,owner_org_value,sys_handle,business_group,business_category,creationdate,lastchangedate

@@ -299,12 +299,11 @@ def classify_node(string)
   end
 end
 
-=begin
 namespace :device do
   task :get_configuration => :environment do
     puts "== Downloading configurations"
     @device_ids.each do |device_id|
-      device = CouchPotato.database.load(device_id.to_s)
+      device = Equipment.where(id: device_id).first
 
       puts "= #{device.name} (#{device.id})"
       if device.cmdb[:up] == 0
@@ -316,13 +315,12 @@ namespace :device do
         clogin(device.cmdb[:real_ip], temp_file)
 
         device_configuration = File.read(temp_file)
-        device._attachments = {configuration: {data: device_configuration, content_type: 'text/plain'}}
+        device.file_config = device_configuration
 
         device.timestamps[:configuration] = created_at
-        device.is_dirty
-        CouchPotato.database.save_document device
+        device.save
         puts "OK"
-        # File.delete temp_file
+        File.delete temp_file
       else
         puts "is a slave device for #{device.cmdb[:up_value]}!"
       end
@@ -332,17 +330,17 @@ namespace :device do
   task :parse_configuration => :environment do
     puts "== Parsing configurations"
     @device_ids.each do |device_id|
-      device = CouchPotato.database.load(device_id.to_s)
+      device = Equipment.where(id: device_id).first
 
       puts "= #{device.name} (#{device.id})"
-      if device.cmdb[:up] == 0 && device._attachments? && !device._attachments["configuration"].nil?
+      if device.cmdb[:up] == 0 && !device.file_config.nil?
         created_at = DateTime.now.utc.to_s
 
         device.device = {} if device.device.nil?
         device.device[:neighbors] = {} if device.device[:neighbors].nil?
         device.timestamps = {} if device.timestamps.nil?
 
-        device_configuration = CouchPotato.couchrest_database.fetch_attachment(device, "configuration").gsub!(/(\r|\n)+/, "\n")
+        device_configuration = device.file_config.gsub!(/(\r|\n)+/, "\n")
 
         parsed_hostname = get_hostname(device_configuration)
         parsed_interfaces = parse_interfaces(get_command_output(device_configuration, "show configuration"))
@@ -352,7 +350,7 @@ namespace :device do
         device.device[:interfaces] = parsed_interfaces
         device.device[:neighbors][:cdp] = parsed_cdp
         device.timestamps[:parsed_configuration] = created_at
-        CouchPotato.database.save_document device
+        device.save
         puts "OK"
       else
         puts "is a slave device for #{device.cmdb[:up_value]}!" if device.cmdb[:up] > 0
@@ -361,4 +359,3 @@ namespace :device do
     end
   end
 end
-=end

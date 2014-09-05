@@ -39,6 +39,12 @@ def get_records_from_cmdb(query_class)
                 when 'Equipment'
                   infr = Equipment.new
                   infr.site_id = record[:sitid]
+
+                  if (!record[:alias_equipment] || record[:alias_equipment] == "" || record[:alias_equipment] == "none")
+                    infr.alias = record[:name].gsub(".lan.skf.net", "").downcase
+                  else
+                    infr.alias = record[:alias_equipment].downcase
+                  end
                 when 'Line' then
                   infr = Line.new
                 when 'Subnet' then
