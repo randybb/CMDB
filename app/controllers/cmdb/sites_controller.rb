@@ -4,12 +4,12 @@ class Cmdb::SitesController < ApplicationController
   end
 
   def show
-    site = Site.where(infrid: params[:id])
+    site = Site.where(id: params[:id])
     if site.nil?
       render file: "public/404.html", status: :not_found
     else
       @site = site.first
-      @devices = Equipment.where(sitid: params[:id])
+      @devices = Equipment.where(site_id: params[:id])
     end
   end
 end

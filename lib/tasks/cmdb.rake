@@ -38,7 +38,7 @@ def get_records_from_cmdb(query_class)
                   infr = Site.new
                 when 'Equipment'
                   infr = Equipment.new
-                  infr.sitid = record[:sitid]
+                  infr.site_id = record[:sitid]
                 when 'Line' then
                   infr = Line.new
                 when 'Subnet' then
@@ -53,13 +53,13 @@ def get_records_from_cmdb(query_class)
                   raise "There is no record_class in query!"
               end
 
-              infr.infrid = record[:infrid]
+              infr.id = record[:infrid]
               # else
               # infr = existing_infr
               # end
             infr.name = record[:name]
-            infr.orgid = orgid.to_i
-            infr.cmdb = record
+              infr.org_id = orgid.to_i
+              infr.cmdb = record
 
               infr.save
           rescue Exception => e
