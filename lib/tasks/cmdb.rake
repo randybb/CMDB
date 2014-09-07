@@ -31,43 +31,36 @@ def get_records_from_cmdb(query_class)
         data[0...-1].each do |record|
           puts "= #{record[:name]}".colorize(:yellow)
           begin
-            # existing_infr = CouchPotato.database.load(params[:id])
-            # if existing_infr.nil?
-              case record_class
-                when 'Site' then
-                  infr = Site.new
-                when 'Equipment'
-                  infr = Equipment.new
-                  infr.site_id = record[:sitid]
+            case record_class
+              when 'Site' then
+                infr = Site.find_or_create_by(id: record[:infrid])
+              when 'Equipment'
+                infr = Equipment.find_or_create_by(id: record[:infrid])
+                infr.site_id = record[:sitid]
 
-                  if (!record[:alias_equipment] || record[:alias_equipment] == "" || record[:alias_equipment] == "none")
-                    infr.alias = record[:name].gsub(".lan.skf.net", "").downcase
-                  else
-                    infr.alias = record[:alias_equipment].downcase
-                  end
-                when 'Line' then
-                  infr = Line.new
-                when 'Subnet' then
-                  infr = Subnet.new
-                when 'System' then
-                  infr = System.new
-                when 'Region' then
-                  infr = Region.new
-                when 'Solution' then
-                  infr = Solution.new
+                if (!record[:alias_equipment] || record[:alias_equipment] == "" || record[:alias_equipment] == "none")
+                  infr.alias = record[:name].gsub(".lan.skf.net", "").downcase
                 else
-                  raise "There is no record_class in query!"
-              end
-
-              infr.id = record[:infrid]
-              # else
-              # infr = existing_infr
-              # end
+                  infr.alias = record[:alias_equipment].downcase
+                end
+              when 'Line' then
+                infr = Line.find_or_create_by(id: record[:infrid])
+              when 'Subnet' then
+                infr = Subnet.find_or_create_by(id: record[:infrid])
+              when 'System' then
+                infr = System.find_or_create_by(id: record[:infrid])
+              when 'Region' then
+                infr = Region.find_or_create_by(id: record[:infrid])
+              when 'Solution' then
+                infr = Solution.find_or_create_by(id: record[:infrid])
+              else
+                raise "There is no record_class in query!"
+            end
             infr.name = record[:name]
-              infr.org_id = orgid.to_i
-              infr.cmdb = record
+            infr.org_id = orgid.to_i
+            infr.cmdb = record
 
-              infr.save
+            infr.save
           rescue Exception => e
             puts e.message
           end
