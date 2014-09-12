@@ -1,28 +1,7 @@
 == README
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+This is an useles project for everybody. Well, not for everybody, but for most of people outside of HP.
 
-Things you may want to cover:
+Initial requirment is HP Internal CMDB+ (aka. Redfish/R2), which is used as a source of all CMDB records (Sites, Equipments,...).
 
-* Ruby version
-
-* System dependencies
-
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
-
-
-Please feel free to use a different markup language if you do not plan to run
-<tt>rake doc:app</tt>.
+This project is still work in progress...
