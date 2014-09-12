@@ -5,7 +5,7 @@ def get_records_from_cmdb(query_class)
 
   uri_auth = {name: CMDB_WEB[:username], password: CMDB_WEB[:password]}
   uri = URI(CMDB_WEB[:uri] + CMDB_WEB[:"query_#{query_class}"])
-  # uri = URI.join(CMDB_WEB[:uri], CMDB_WEB[:"query_#{query_class}"], "&changedafter=#{records_from}")
+  # uri = URI(CMDB_WEB[:uri] + CMDB_WEB[:"query_#{query_class}"] + "&changedafter=#{records_from}")
 
   record_class = Rack::Utils.parse_query(uri.query)['itype']
   orgid = Rack::Utils.parse_query(uri.query)['owner_org_acr']
@@ -38,7 +38,7 @@ def get_records_from_cmdb(query_class)
                 infr = Equipment.find_or_create_by(id: record[:infrid])
                 infr.site_id = record[:sitid]
 
-                if (!record[:alias_equipment] || record[:alias_equipment] == "" || record[:alias_equipment] == "none")
+                if !record[:alias_equipment] || record[:alias_equipment] == "" || record[:alias_equipment] == "none"
                   infr.alias = record[:name].gsub(".lan.skf.net", "").downcase
                 else
                   infr.alias = record[:alias_equipment].downcase
