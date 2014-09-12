@@ -300,6 +300,7 @@ def classify_node(string)
 end
 
 namespace :device do
+  desc 'Run show commands on a device and store it to Equipment.file_config'
   task :get_configuration => :environment do
     puts "== Downloading configurations"
     @device_ids.each do |device_id|
@@ -327,6 +328,7 @@ namespace :device do
     end
   end
 
+  desc 'Parse Equipment.file_config and store its output output to Equipment.device'
   task :parse_configuration => :environment do
     puts "== Parsing configurations"
     @device_ids.each do |device_id|
