@@ -1,6 +1,12 @@
 class Cmdb::SitesController < ApplicationController
   def index
     @sites = Site
+    infra = Infra.where(id: 'Site').first
+    if infra.nil?
+      @cmdb_ver = nil
+    else
+      @cmdb_ver = infra.updated_at.to_s(:short)
+    end
   end
 
   def show
@@ -11,5 +17,20 @@ class Cmdb::SitesController < ApplicationController
       @site = site.first
       @devices = Equipment.where(site_id: params[:id])
     end
+  end
+
+  def update_from_cmdb
+    system "rake cmdb:update_sites"
+    redirect_to action: 'index'
+  end
+
+  def update_from_devices
+    devices = Equipment.where(site_id: params[:id])
+
+    device_ids = []
+    devices.each { |eq| device_ids << eq.id }
+
+    system "rake device:default#{device_ids.to_s.gsub(' ', '')}"
+    redirect_to :back
   end
 end

@@ -1,15 +1,19 @@
 Rails.application.routes.draw do
   namespace :cmdb do
     get 'sites' => 'sites#index'
+    get 'sites/update' => 'sites#update_from_cmdb'
     get "sites/:id" => "sites#show", :constraints => {:id => /[\w._\-]*/}
+    get "sites/:id/update_device" => "sites#update_from_devices", :constraints => {:id => /[\w._\-]*/}
   end
 
   namespace :cmdb do
     get 'devices' => 'devices#index'
+    get 'devices/update' => 'devices#update_from_cmdb'
     get "devices/:id" => "devices#show", :constraints => {:id => /[\w._\-]*/}
     get "devices/:id/configuration" => "devices#show_configuration", :constraints => {:id => /[\w._\-]*/}
     get "devices/:id/interfaces" => "devices#show_interfaces", :constraints => {:id => /[\w._\-]*/}
     get "devices/:id/cdp" => "devices#show_cdp", :constraints => {:id => /[\w._\-]*/}
+    get "devices/:id/update_device" => "devices#update_from_device", :constraints => {:id => /[\w._\-]*/}
   end
 
   namespace :cmdb do

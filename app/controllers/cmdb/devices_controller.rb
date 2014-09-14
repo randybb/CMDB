@@ -1,6 +1,12 @@
 class Cmdb::DevicesController < ApplicationController
   def index
     @devices = Equipment
+    infra = Infra.where(id: 'Equipment').first
+    if infra.nil?
+      @cmdb_ver = nil
+    else
+      @cmdb_ver = infra.updated_at.to_s(:short)
+    end
   end
 
   def show
@@ -50,5 +56,18 @@ class Cmdb::DevicesController < ApplicationController
       end
       @device = device
     end
+  end
+
+  def update_from_cmdb
+    system "rake cmdb:update_equipments"
+    redirect_to action: 'index'
+  end
+
+  def update_from_device
+    device_ids = []
+    device_ids << params[:id]
+
+    system "rake device:default#{device_ids.to_s.gsub(' ', '')}"
+    redirect_to :back
   end
 end

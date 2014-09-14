@@ -1,6 +1,18 @@
-<h1>
-  <small>Devices</small>
-</h1>
+<div class="row">
+  <div class="col-xs-11 col-sm-11 col-md-11 col-lx-11">
+    <h1>
+      <small>Devices</small>
+    </h1>
+  </div>
+  <div class="col-xs-1 col-md-1 col-lx-1">
+    <p class="text-right">
+      <%= link_to('<button type="button" class="btn btn-primary btn-sm">Update from CMDB+</button><br />'.html_safe, {action: "update_from_cmdb"}) %>
+      <small>Version</small> <%= @cmdb_ver %>
+      <br/>
+      <small>Count</small> <%= @devices.count %>
+    </p>
+  </div>
+</div>
 
 <table class="table table-striped table-condensed">
   <thead>
@@ -38,5 +50,4 @@
   <% end %>
   </tbody>
 </table>
-
 <br>

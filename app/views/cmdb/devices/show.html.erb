@@ -1,71 +1,210 @@
 <% d = @device.cmdb %>
-<h1>
-  <small>Device</small> <%= d[:name] %>
-  <a href="https://r2.grenoble.hp.com/operations/direct/infra/<%= d[:infrid] %>"><span class="fa fa-external-link"></span></a>
-  <small>id: <%= d[:infrid] %></small>
-</h1>
-<h4>
-  <small>Alias</small> <%= d[:alias_equipment] %></h4>
-<p>
-  <%= link_to('<span class="fa fa-file-text"></span> Configuration'.html_safe, {controller: "cmdb/devices", id: @device[:_id], action: "show_configuration"}) unless @device.file_config.nil? %>
-  <%= link_to(' | <span class="fa fa-list-ol"></span> Show Interfaces'.html_safe, {controller: "cmdb/devices", id: @device[:_id], action: "show_interfaces"}) if @device.device && @device.device[:interfaces] %>
-<%= link_to(' | <span class="fa fa-tree"></span> Show CDP'.html_safe, {controller: "cmdb/devices", id: @device[:_id], action: "show_cdp"}) if @device.device && @device.device[:neighbors] && @device.device[:neighbors][:cdp] %>
-</p>
+<div class="row">
+  <div class="col-xs-11 col-sm-11 col-md-11 col-lx-11">
+    <h1>
+      <small>Device</small> <%= d[:name] %>
+      <a href="https://r2.grenoble.hp.com/operations/direct/infra/<%= d[:infrid] %>"><span class="fa fa-external-link"></span></a>
+      <small>id: <%= d[:infrid] %></small>
+    </h1>
+    <h4>
+      <small>Alias</small> <%= d[:alias_equipment] %></h4>
+    <p>
+      <%= link_to('<span class="fa fa-file-text"></span> Configuration'.html_safe, {controller: "cmdb/devices", id: @device[:_id], action: "show_configuration"}) unless @device.file_config.nil? %>
+      <%= link_to(' | <span class="fa fa-list-ol"></span> Show Interfaces'.html_safe, {controller: "cmdb/devices", id: @device[:_id], action: "show_interfaces"}) if @device.device && @device.device[:interfaces] %>
+      <%= link_to(' | <span class="fa fa-tree"></span> Show CDP'.html_safe, {controller: "cmdb/devices", id: @device[:_id], action: "show_cdp"}) if @device.device && @device.device[:neighbors] && @device.device[:neighbors][:cdp] %>
+    </p>
+  </div>
+  <div class="col-xs-1 col-md-1 col-lx-1">
+    <p class="text-right">
+      <%= link_to('<button type="button" class="btn btn-primary btn-sm">Update from device</button><br />'.html_safe, {action: "update_from_device"}) %>
+      <small>Created at</small> <%= d[:creationdate].to_s(:db) %>
+      <br/>
+      <small>Updated at</small> <%= d[:lastchangedate].to_s(:db) %>
+      <br/>
+      <%# TODO: fix this ugly date%>
+      <small>Dev updated at</small> <%= @device.timestamps[:parsed_configuration].to_s unless @device.timestamps.nil? %>
+      <br/>
+    </p>
+  </div>
+</div>
 <table class="table table-striped table-condensed">
   <tbody>
-  <% ( %><tr><th>Parent device</th><td><%= link_to d[:up_value], "/cmdb/devices/#{d[:up]}" %> <a href="https://r2.grenoble.hp.com/operations/direct/infra/<%= d[:up] %>"><span class="fa fa-external-link"></span></a> <small>id: <%= d[:up] %></small></td></tr><% ) if d[:up].present? && d[:up] > 0 %>
-  <tr><th>Mgmt IP Address</th><td><%= d[:ip] %> <%= d[:ip_mask] %></td></tr>
-  <tr><th>IP Address</th><td><%= d[:real_ip] %> <%= d[:real_ip_mask] %></td></tr>
-  <tr><th>Default gateway</th><td><%= d[:default_gw] %></td></tr>
-  <% ( %><<tr><th>Peer ID</th><td><%= d[:peerid] %></td></tr><% ) if d[:peerid].present? && d[:peerid] > 0 %>
-  <tr><th>Site</th><td><%= link_to d[:sitid_value], "/cmdb/sites/#{d[:sitid]}" %> <a href="https://r2.grenoble.hp.com/operations/direct/infra/<%= d[:sitid] %>"><span class="fa fa-external-link"></span></a> <small>id: <%= d[:sitid] %></small></td></tr>
-  <tr><th>Location</th><td><%= d[:floor] %></td></tr>
-  <tr><th>Criticality</th><td><%= d[:criticality] %></td></tr>
-  <tr><th>Impact</th><td><%= d[:impact] %></td></tr>
-  <tr><th>Service type</th><td><%= d[:service_type] %></td></tr>
-  <tr><th>Category</th><td><%= d[:category] %></td></tr>
-  <tr><th>Type</th><td><%= d[:type] %></td></tr>
-  <tr><th>Description</th><td><%= d[:description] %></td></tr>
-  <tr><th>Brand</th><td><%= d[:brand] %></td></tr>
-  <tr><th>Model</th><td><%= d[:model_nb] %></td></tr>
-  <tr><th>Complexity</th><td><%= d[:complexity] %></td></tr>
-  <tr><th>Sys Object ID</th><td><%= d[:sys_object_id] %></td></tr>
-  <tr><th>Part number</th><td><%= d[:part_nb] %></td></tr>
-  <tr><th>Serial number</th><td><%= d[:serial_nb] %></td></tr>
-  <tr><th>Asset owner</th><td><%= d[:asset_owner] %></td></tr>
-  <tr><th>Asset ID</th><td><%= d[:asset_id] %></td></tr>
-  <tr><th>Sys handle</th><td><%= d[:sys_handle] %></td></tr>
-  <tr><th>Maintenance</th><td><%= d[:maintenance] %></td></tr>
-  <tr><th>Order number</th><td><%= d[:order_nb] %></td></tr>
-  <tr><th>Number of ports</th><td><%= d[:nb_ports] %></td></tr>
-  <tr><th>OS version</th><td><%= d[:os_version] %></td></tr>
-  <tr><th>HW version</th><td><%= d[:hw_version] %></td></tr>
-  <tr><th>Memory</th><td><%= d[:memory] %></td></tr>
-  <tr><th>MAC Address</th><td><%= d[:mac_addr] %></td></tr>
-  <tr><th>SNMP Get</th><td><%= d[:snmp_get_] %></td></tr>
-  <tr><th>SNMP Set</th><td><%= d[:snmp_set_] %></td></tr>
-  <tr><th>SNMP v3</th><td><%= d[:snmp_v3_] %></td></tr>
-  <tr><th>First Level Password</th><td><%= d[:first_level_pwd_] %></td></tr>
-  <tr><th>Second Level Password</th><td><%= d[:second_level_pwd_] %></td></tr>
-  <tr><th>Step</th><td><%= d[:step] %></td></tr>
-  <tr><th>Owner ORG</th><td><%= d[:owner_org_value] %></td></tr>
-  <tr><th>Business Group / Category</th><td><%= d[:business_group] %> / <%= d[:business_category] %></td></tr>
-  <tr><th>Billed location</th><td><%= d[:billed_location] %></td></tr>
-  <tr><th>Comment</th><td><%= d[:comment] %></td></tr>
+  <% ( %>
+      <tr>
+        <th>Parent device</th>
+        <td><%= link_to d[:up_value], "/cmdb/devices/#{d[:up]}" %>
+          <a href="https://r2.grenoble.hp.com/operations/direct/infra/<%= d[:up] %>"><span class="fa fa-external-link"></span></a>
+          <small>id: <%= d[:up] %></small>
+        </td>
+      </tr>
+  <% ) if d[:up].present? && d[:up] > 0 %>
   <tr>
-    <th>Created at | Modified at</th>
-    <td><%= d[:creationdate].to_s(:long) %> | <%= d[:lastchangedate].to_s(:long) %></td>
+    <th>Mgmt IP Address</th>
+    <td><%= d[:ip] %> <%= d[:ip_mask] %></td>
+  </tr>
+  <tr>
+    <th>IP Address</th>
+    <td><%= d[:real_ip] %> <%= d[:real_ip_mask] %></td>
+  </tr>
+  <tr>
+    <th>Default gateway</th>
+    <td><%= d[:default_gw] %></td>
+  </tr>
+  <% ( %><
+      <tr>
+        <th>Peer ID</th>
+        <td><%= d[:peerid] %></td>
+      </tr>
+  <% ) if d[:peerid].present? && d[:peerid] > 0 %>
+  <tr>
+    <th>Site</th>
+    <td><%= link_to d[:sitid_value], "/cmdb/sites/#{d[:sitid]}" %>
+      <a href="https://r2.grenoble.hp.com/operations/direct/infra/<%= d[:sitid] %>"><span class="fa fa-external-link"></span></a>
+      <small>id: <%= d[:sitid] %></small>
+    </td>
+  </tr>
+  <tr>
+    <th>Location</th>
+    <td><%= d[:floor] %></td>
+  </tr>
+  <tr>
+    <th>Criticality</th>
+    <td><%= d[:criticality] %></td>
+  </tr>
+  <tr>
+    <th>Impact</th>
+    <td><%= d[:impact] %></td>
+  </tr>
+  <tr>
+    <th>Service type</th>
+    <td><%= d[:service_type] %></td>
+  </tr>
+  <tr>
+    <th>Category</th>
+    <td><%= d[:category] %></td>
+  </tr>
+  <tr>
+    <th>Type</th>
+    <td><%= d[:type] %></td>
+  </tr>
+  <tr>
+    <th>Description</th>
+    <td><%= d[:description] %></td>
+  </tr>
+  <tr>
+    <th>Brand</th>
+    <td><%= d[:brand] %></td>
+  </tr>
+  <tr>
+    <th>Model</th>
+    <td><%= d[:model_nb] %></td>
+  </tr>
+  <tr>
+    <th>Complexity</th>
+    <td><%= d[:complexity] %></td>
+  </tr>
+  <tr>
+    <th>Sys Object ID</th>
+    <td><%= d[:sys_object_id] %></td>
+  </tr>
+  <tr>
+    <th>Part number</th>
+    <td><%= d[:part_nb] %></td>
+  </tr>
+  <tr>
+    <th>Serial number</th>
+    <td><%= d[:serial_nb] %></td>
+  </tr>
+  <tr>
+    <th>Asset owner</th>
+    <td><%= d[:asset_owner] %></td>
+  </tr>
+  <tr>
+    <th>Asset ID</th>
+    <td><%= d[:asset_id] %></td>
+  </tr>
+  <tr>
+    <th>Sys handle</th>
+    <td><%= d[:sys_handle] %></td>
+  </tr>
+  <tr>
+    <th>Maintenance</th>
+    <td><%= d[:maintenance] %></td>
+  </tr>
+  <tr>
+    <th>Order number</th>
+    <td><%= d[:order_nb] %></td>
+  </tr>
+  <tr>
+    <th>Number of ports</th>
+    <td><%= d[:nb_ports] %></td>
+  </tr>
+  <tr>
+    <th>OS version</th>
+    <td><%= d[:os_version] %></td>
+  </tr>
+  <tr>
+    <th>HW version</th>
+    <td><%= d[:hw_version] %></td>
+  </tr>
+  <tr>
+    <th>Memory</th>
+    <td><%= d[:memory] %></td>
+  </tr>
+  <tr>
+    <th>MAC Address</th>
+    <td><%= d[:mac_addr] %></td>
+  </tr>
+  <tr>
+    <th>SNMP Get</th>
+    <td><%= d[:snmp_get_] %></td>
+  </tr>
+  <tr>
+    <th>SNMP Set</th>
+    <td><%= d[:snmp_set_] %></td>
+  </tr>
+  <tr>
+    <th>SNMP v3</th>
+    <td><%= d[:snmp_v3_] %></td>
+  </tr>
+  <tr>
+    <th>First Level Password</th>
+    <td><%= d[:first_level_pwd_] %></td>
+  </tr>
+  <tr>
+    <th>Second Level Password</th>
+    <td><%= d[:second_level_pwd_] %></td>
+  </tr>
+  <tr>
+    <th>Step</th>
+    <td><%= d[:step] %></td>
+  </tr>
+  <tr>
+    <th>Owner ORG</th>
+    <td><%= d[:owner_org_value] %></td>
+  </tr>
+  <tr>
+    <th>Business Group / Category</th>
+    <td><%= d[:business_group] %> / <%= d[:business_category] %></td>
+  </tr>
+  <tr>
+    <th>Billed location</th>
+    <td><%= d[:billed_location] %></td>
+  </tr>
+  <tr>
+    <th>Comment</th>
+    <td><%= d[:comment] %></td>
   </tr>
   <% ( %>
       <tr>
-      <th>Moved to production</th>
-      <td><%= d[:first_mtp_date].to_s(:long) %></td>
+        <th>Moved to production</th>
+        <td><%= d[:first_mtp_date].to_s(:long) %></td>
       </tr>
   <% ) unless (d[:first_mtp_date].nil? || d[:first_mtp_date] == "0000-00-00 00:00:00") %>
   <% ( %>
       <tr>
-      <th>Moved to obsolete</th>
-      <td><%= d[:last_obsolete_date].to_s(:long) %></td>
+        <th>Moved to obsolete</th>
+        <td><%= d[:last_obsolete_date].to_s(:long) %></td>
       </tr>
   <% ) unless (d[:last_obsolete_date].nil? || d[:last_obsolete_date] == "0000-00-00 00:00:00") %>
   </tbody>

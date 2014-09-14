@@ -1,58 +1,15 @@
-@device_ids = [7357596,
-               7357598,
-               7357600,
-               7357602,
-               7357605,
-               7357606,
-               7357609,
-               7357610,
-               7437051]
-
 def clogin(ip_address, filename)
   `clogin -x ~/.clogin/show #{ip_address} | tee #{filename}`
 end
 
-##
-# next functions are required for the configuration parser
-
-# TODO: change to the real location
-ICON = {
-    firewall_asa: 'cisco_shapes/firewall_asa.png',
-    firewall: 'cisco_shapes/firewall.png',
-    router_fw: 'cisco_shapes/router_fw.png',
-    router: 'cisco_shapes/router.png',
-    router_switch_fwsm: 'cisco_shapes/router_switch_fwsm.png',
-    router_switch: 'cisco_shapes/router_switch.png',
-    router_switch_vss: 'cisco_shapes/router_switch_vss.png',
-    switch_dc: 'cisco_shapes/switch_dc.png',
-    switch_l2: 'cisco_shapes/switch_l2.png',
-    switch_l2_stack: 'cisco_shapes/switch_l2_stack.png',
-    switch_l3: 'cisco_shapes/switch_l3.png',
-    switch_l3_stack: 'cisco_shapes/switch_l3_stack.png',
-    wlan_ap_dual: 'cisco_shapes/wlan_ap_dual.png',
-    wlan_ap_lwap: 'cisco_shapes/wlan_ap_lwap.png',
-    wlan_ap: 'cisco_shapes/wlan_ap.png',
-    wlan_controller: 'cisco_shapes/wlan_controller.png',
-}
-
-def ipv4_a_to_s(array)
-  output = ""
-  array.each do |line|
-    begin
-      cidr = NetAddr::CIDR.create "#{line[:address]} #{line[:mask]}"
-      output += cidr.to_s + " "
-    rescue
-      nil
-    end
-  end unless array.nil?
-  return output.strip
-end
-
 namespace :device do
+  desc "Get and Parse"
+  task :default => [:get_configuration, :parse_configuration]
+
   desc 'Run show commands on a device and store it to Equipment.file_config'
-  task :get_configuration => :environment do
+  task :get_configuration => :environment do |task, params|
     puts "== Downloading configurations"
-    @device_ids.each do |device_id|
+    params.extras.each do |device_id|
       device = Equipment.where(id: device_id).first
 
       puts "= #{device.name} (#{device.id})"
@@ -78,9 +35,9 @@ namespace :device do
   end
 
   desc 'Parse Equipment.file_config and store its output output to Equipment.device'
-  task :parse_configuration => :environment do
+  task :parse_configuration => :environment do |task, params|
     puts "== Parsing configurations"
-    @device_ids.each do |device_id|
+    params.extras.each do |device_id|
       device = Equipment.where(id: device_id).first
 
       puts "= #{device.name} (#{device.id})"

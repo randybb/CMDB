@@ -65,6 +65,10 @@ def get_records_from_cmdb(query_class)
             puts e.message
           end
         end
+
+        cmdb_record = Infra.find_or_create_by(id: record_class)
+        cmdb_record.updated_at = Time.now
+        cmdb_record.save
       when Net::HTTPRedirection then
         puts "here: " + response['location']
       else
