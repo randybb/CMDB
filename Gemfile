@@ -33,6 +33,7 @@ gem 'twitter-bootstrap-rails'
 
 gem 'colorize'
 gem 'netaddr'
+gem 'cisco_parser', git: 'https://github.com/randybb/cisco_parser'
 
 # MongoDB
 gem 'mongoid'
