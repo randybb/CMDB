@@ -51,7 +51,7 @@ class Cmdb::DevicesController < ApplicationController
         device_name = device[:hostname].downcase
         infr = Equipment.where(alias: device_name)
         infrid = ""
-        infrid = infr.first[:id] unless infr.nil?
+        infrid = infr.first[:id] unless infr.nil? || infr.first.nil?
         @device_cdp_neighbors << {device: device_name, infrid: infrid}
       end
       @device = device
