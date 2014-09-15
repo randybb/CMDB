@@ -22,24 +22,36 @@ rescue
 end
 
 def cdp_tree_for(device_id)
-  visited_ids = []
-  visited_ids << device_id.to_s
+  device_cdp_neighbors = cdp_neighbors_for(device_id)
+  @visited_ids << device_id.to_s
+  @nodes << {id: device_id.to_s}
+
   tree = []
 
-  device_cdp_neighbors = cdp_neighbors_for(device_id)
-
   device_cdp_neighbors.each do |device|
-    neighbor_id = device['device_id']
-    visited_ids << neighbor_id.to_s
+    neighbor_id = device['device_id'].to_s
+    if @visited_ids.include? neighbor_id
+      tree << device.merge(device_cdp: nil)
+    else
+      @visited_ids << neighbor_id.to_s
 
-    puts visited_ids.to_s
-    neighbor_cdp = cdp_neighbors_for(neighbor_id)
-    neighbor_cdp = neighbor_cdp.drop_while { |device| visited_ids.include? device[:device_id].to_s } unless neighbor_cdp.nil?
-    ap neighbor_cdp
-    tree << device.merge(device_cdp: neighbor_cdp)
+      neighbor_cdp = cdp_tree_for(neighbor_id)
+      tree << device.merge(device_cdp: neighbor_cdp)
+      @edges << {src_id: device_id.to_s, dst_id: neighbor_id, src_if: device[:ne_interface], dst_if: device[:interface]}
+    end
+    tree
   end
 
   tree
+end
+
+def full_cdp_tree_for(device_id)
+  @visited_ids = []
+  @nodes = []
+  @edges = []
+  tree = cdp_tree_for(device_id)
+
+  {nodes: @nodes, edges: @edges}
 end
 
 namespace :topology do
@@ -48,7 +60,7 @@ namespace :topology do
     device_id = params.extras
     device_id = 3499861
 
-    tree = cdp_tree_for device_id
+    tree = full_cdp_tree_for device_id
 
     ap tree
   end
