@@ -17,17 +17,25 @@ def cdp_neighbors_for(device_id)
   end
 
   device_cdp_with_id
+rescue
+  nil
 end
 
 def cdp_tree_for(device_id)
+  visited_ids = []
+  visited_ids << device_id.to_s
   tree = []
 
   device_cdp_neighbors = cdp_neighbors_for(device_id)
 
   device_cdp_neighbors.each do |device|
     neighbor_id = device['device_id']
+    visited_ids << neighbor_id.to_s
 
+    puts visited_ids.to_s
     neighbor_cdp = cdp_neighbors_for(neighbor_id)
+    neighbor_cdp = neighbor_cdp.drop_while { |device| visited_ids.include? device[:device_id].to_s } unless neighbor_cdp.nil?
+    ap neighbor_cdp
     tree << device.merge(device_cdp: neighbor_cdp)
   end
 
@@ -40,7 +48,7 @@ namespace :topology do
     device_id = params.extras
     device_id = 3499861
 
-    tree = cdp_neighbors_for device_id
+    tree = cdp_tree_for device_id
 
     ap tree
   end
