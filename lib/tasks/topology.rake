@@ -1,8 +1,6 @@
-require 'moped'
-require 'bson'
 Moped::BSON = BSON
 
-SERVER_IMG_PATH = "http://localhost:3000/public/images/"
+SERVER_IMG_PATH = "http://localhost:3000/images/"
 ICON = {
     firewall_asa: 'cisco_shapes/firewall_asa.png',
     firewall: 'cisco_shapes/firewall.png',
@@ -20,6 +18,7 @@ ICON = {
     wlan_ap_lwap: 'cisco_shapes/wlan_ap_lwap.png',
     wlan_ap: 'cisco_shapes/wlan_ap.png',
     wlan_controller: 'cisco_shapes/wlan_controller.png',
+    unknown: 'cisco_shapes/unknown.png',
 }
 
 def abbr_ifs(string)
@@ -39,8 +38,8 @@ end
 
 def classify_node(string)
   case string
-    when /^AIR-CAP.*$/
-      model = /^AIR-(.*)$/.match(string)[1]
+    when /^cisco AIR-CAP.*$/
+      model = /^cisco AIR-(.*)$/.match(string)[1]
       return {class: 'wlan_ap', model: model, icon: ICON[:wlan_ap]}
     when /^AIR-(WLC|CT).*$/
       model = /^AIR-(.*)$/.match(string)[1]
@@ -58,10 +57,11 @@ def classify_node(string)
       model = /^(.*)$/.match(string)[1]
       return {class: 'router', model: model, icon: ICON[:router]}
     else
-      return {class: "unknown", model: string, icon: ''}
+      return {class: "unknown", model: string, icon: ICON[:unknown]}
   end
 end
 
+# TODO: interface => src_interface, ne_interface => interface
 def cdp_neighbors_for(device_id)
   device = Equipment.where(id: device_id).first
 
@@ -71,10 +71,11 @@ def cdp_neighbors_for(device_id)
 
   device_cdp.each do |device|
     device_name = device[:hostname].downcase
+    device_class = classify_node device[:platform]
     infr = Equipment.where(alias: device_name)
     infrid = ''
     infrid = infr.first[:id] unless infr.nil? || infr.first.nil?
-    device_cdp_with_id << device.merge(device_name: device_name, device_id: infrid, src_device_name: src_device_name, src_device_id: device_id.to_s)
+    device_cdp_with_id << device.merge(device_name: device_name, device_id: infrid, device_class: device_class, src_device_name: src_device_name, src_device_id: device_id.to_s)
   end
 
   device_cdp_with_id
@@ -86,37 +87,22 @@ def cdp_tree_for(device_id)
   device_cdp_neighbors = cdp_neighbors_for(device_id)
   device = Equipment.where(id: device_id).first
   unless device.nil?
-    src_device_name = device.alias
     @visited_ids << device_id.to_s
-    @nodes << {id: device_id.to_s, name: src_device_name}
 
     tree = []
     unless device_cdp_neighbors.nil?
       device_cdp_neighbors.each do |device|
         neighbor_id = device[:device_id].to_s
-        node = @nodes.find { |node| node[:name] == device[:hostname] }
-        neighbor_class = classify_node device[:platform]
 
         if @visited_ids.include? neighbor_id
-          tree << device.merge(device_cdp: nil, device_class: neighbor_class)
+          tree << device.merge(device_cdp: nil)
         else
           @visited_ids << neighbor_id.to_s
-
           neighbor_cdp = cdp_tree_for(neighbor_id)
-          tree << device.merge(device_cdp: neighbor_cdp, device_class: neighbor_class)
+          tree << device.merge(device_cdp: neighbor_cdp)
         end
 
-        # TODO: this is a stupid workaround, but it works :( - it will add a random ID for unknown devices
-        if neighbor_id.empty?
-          if node.nil?
-            neighbor_id = Random.rand(100).to_s
-            @nodes << {id: neighbor_id, name: device[:hostname]}
-          else
-            neighbor_id = node[:id]
-          end
-        end
-
-        @edges << {src_id: device_id.to_s, dst_id: neighbor_id, src_if: abbr_ifs(device[:interface]), dst_if: abbr_ifs(device[:ne_interface])}
+        @edges << device
         tree
       end
     end
@@ -127,16 +113,40 @@ end
 
 def full_cdp_tree_for(device_id)
   @visited_ids = []
-  @nodes = []
+  nodes = []
   @edges = []
+
   tree = cdp_tree_for(device_id)
 
-  {nodes: @nodes, edges: @edges.uniq, tree: tree}
+  @edges.each do |edge|
+    nodes << {id: edge[:device_id], name: edge[:device_name], class: edge[:device_class], mgmt_address: edge[:mgmt_address]}
+  end
+  nodes.uniq!
+
+  # add IDs for not defined devices in CMDB
+  nodes.map! do |node|
+    if node[:id].empty?
+      node.merge!({id: Random.rand(100).to_s})
+    else
+      node
+    end
+  end
+
+  @edges.map! do |edge|
+    if edge[:device_id].empty?
+      node = nodes.find { |node| node[:name] == edge[:device_name] }
+      edge.merge!({device_id: node[:id]})
+    else
+      edge
+    end
+  end
+
+  {nodes: nodes, edges: @edges}
 end
 
 # http://docs.yworks.com/yfiles/doc/developers-guide/gml.html
 def create_gml(nodes, edges)
-  output = ""
+  output = ''
   output << %q~
 graph [
   hierarchic 0
@@ -147,32 +157,33 @@ graph [
     output << %Q~  node [
     id #{node[:id]}
     graphics [
-      image "#{node[:icon]}"
+      image "#{SERVER_IMG_PATH}#{node[:class][:icon]}"
     ]
     LabelGraphics [
       anchor "s"
-      text  "#{node[:name]}"
+      text  "#{node[:name]}\n#{node[:mgmt_address].first}"
     ]
   ]
 ~
   end
 
-  edges.each_with_index do |edge, id|
+  edges.each do |edge|
     output << %Q~  edge [
-    source #{edge[:src_id]}
-    target #{edge[:dst_id]}
+    source #{edge[:src_device_id]}
+    target #{edge[:device_id]}
     graphics [
       sourceArrow "none"
       targetArrow "none"
+      width 2
     ]
     LabelGraphics [
-      text  "#{edge[:src_if]}"
+      text  "#{edge[:interface]}"
       configuration "AutoFlippingLabel"
       model "six_pos"
       position  "shead"
     ]
     LabelGraphics [
-      text  "#{edge[:dst_if]}"
+      text  "#{edge[:ne_interface]}"
       configuration "AutoFlippingLabel"
       model "six_pos"
       position  "thead"
@@ -180,7 +191,7 @@ graph [
   ]
 ~
   end
-  output << "]"
+  output << ']'
 end
 
 namespace :topology do
@@ -198,6 +209,6 @@ namespace :topology do
     gml = File.new(gml_filename, "w")
     gml.write create_gml(full_tree[:nodes], full_tree[:edges])
     gml.close
-    # `open #{gml_filename}`
+    `open #{gml_filename}`
   end
 end
