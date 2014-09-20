@@ -13,7 +13,7 @@ namespace :device do
       device = Equipment.where(id: device_id).first
 
       puts "= #{device.name} (#{device.id})"
-      if device.cmdb[:up] == 0
+      if device.cmdb[:up] == 0 && device.cmdb[:brand] == 'Cisco' && device.cmdb[:type] == 'Switch' && device.cmdb[:step] == 'production'
         created_at = DateTime.now.utc.to_s
         temp_file = "tmp/#{device[:name]}.txt"
 
@@ -38,10 +38,11 @@ namespace :device do
   task :parse_configuration => :environment do |task, params|
     puts "== Parsing configurations"
     params.extras.each do |device_id|
+      begin
       device = Equipment.where(id: device_id).first
 
       puts "= #{device.name} (#{device.id})"
-      if device.cmdb[:up] == 0 && !device.file_config.nil?
+      if device.cmdb[:up] == 0 && !device.file_config.nil? && device.cmdb[:brand] == 'Cisco' && device.cmdb[:type] == 'Switch'
         created_at = DateTime.now.utc.to_s
 
         device.device = {} if device.device.nil?
@@ -66,6 +67,9 @@ namespace :device do
       else
         puts "is a slave device for #{device.cmdb[:up_value]}!" if device.cmdb[:up] > 0
         puts "it doesn't contains the configuration attachment!" if device._attachments["configuration"].nil
+      end
+      rescue
+        nil
       end
     end
   end

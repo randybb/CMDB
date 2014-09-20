@@ -22,7 +22,7 @@
         <td><%= cdp[:mgmt_address].join(", ") %></td>
         <td><%= cdp[:platform] %></td>
         <td><%= cdp[:capabilities].gsub(" ", ", ") %></td>
-        <td><%= cdp[:interface] %> <i class="fa fa-long-arrow-right"></i> <%= cdp[:ne_interface] %></td>
+        <td><%= cdp[:interface] %> <i class="fa fa-long-arrow-right"></i> <%= cdp[:src_interface] %></td>
         <td><%= cdp[:duplex] %></td>
       </tr>
 <% end %>
