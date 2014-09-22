@@ -21,8 +21,8 @@
       <br/>
       <small>Updated at</small> <%= d[:lastchangedate].to_s(:custom_short) %>
       <br/>
-      <%# TODO: fix this ugly date%>
-      <small>Dev updated at</small> <%= @device.timestamps[:parsed_configuration].to_s unless @device.timestamps.nil? %>
+      <small>Dev updated at
+      </small> <%= Time.parse(@device.timestamps[:parsed_configuration]).strftime(Time::DATE_FORMATS[:custom_short]) unless @device.timestamps.nil? %>
       <br/>
     </p>
   </div>
