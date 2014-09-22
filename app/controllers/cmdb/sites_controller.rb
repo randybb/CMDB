@@ -5,7 +5,7 @@ class Cmdb::SitesController < ApplicationController
     if infra.nil?
       @cmdb_ver = nil
     else
-      @cmdb_ver = infra.updated_at.to_s(:short)
+      @cmdb_ver = infra.updated_at.to_s(:custom_short)
     end
   end
 

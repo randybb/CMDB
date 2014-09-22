@@ -1,0 +1,1 @@
+Time::DATE_FORMATS[:custom_short] = "%Y-%m-%d %H:%M"

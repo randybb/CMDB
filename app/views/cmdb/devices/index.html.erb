@@ -34,8 +34,11 @@
         <td><%= link_to d[:name], "/cmdb/devices/#{d[:infrid]}" %>
           <a href="https://r2.grenoble.hp.com/operations/direct/infra/<%= d[:infrid] %>"><span class="fa fa-external-link"></span></a>
         </td>
-        <td><%= link_to d[:sitid_value], "/cmdb/sites/#{d[:sitid]}" %>
-          <a href="https://r2.grenoble.hp.com/operations/direct/infra/<%= d[:sitid] %>"><span class="fa fa-external-link"></span></a>
+        <td>
+          <% ( %>
+              <%= link_to d[:sitid_value], "/cmdb/sites/#{d[:sitid]}" %>
+              <a href="https://r2.grenoble.hp.com/operations/direct/infra/<%= d[:sitid] %>"><span class="fa fa-external-link"></span></a>
+          <% ) if d[:sitid] != 0 %>
         </td>
         <td><%= d["model_nb"] %></td>
         <td><%= d["real_ip"] %></td>

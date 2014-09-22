@@ -13,9 +13,9 @@
   <div class="col-xs-1 col-md-1 col-lx-1">
     <p class="text-right">
       <%= link_to('<button type="button" class="btn btn-primary btn-sm">Update from devices</button><br />'.html_safe, {action: "update_from_devices"}) %>
-      <small>Created at</small> <%= s[:creationdate].to_s(:db) %>
+      <small>Created at</small> <%= s[:creationdate].to_s(:custom_short) %>
       <br/>
-      <small>Updated at</small> <%= s[:lastchangedate].to_s(:db) %>
+      <small>Updated at</small> <%= s[:lastchangedate].to_s(:custom_short) %>
     </p>
   </div>
 </div>
@@ -73,13 +73,13 @@
   <% ( %>
       <tr>
         <th>Moved to production</th>
-        <td><%= s[:first_mtp_date].to_s(:long) %></td>
+        <td><%= s[:first_mtp_date].to_s(:custom_short) %></td>
       </tr>
   <% ) unless (s[:first_mtp_date].nil? || s[:first_mtp_date] == "0000-00-00 00:00:00") %>
   <% ( %>
       <tr>
         <th>Moved to obsolete</th>
-        <td><%= s[:last_obsolete_date].to_s(:long) %></td>
+        <td><%= s[:last_obsolete_date].to_s(:custom_short) %></td>
       </tr>
   <% ) unless (s[:last_obsolete_date].nil? || s[:last_obsolete_date] == "0000-00-00 00:00:00") %>
   </tbody>
