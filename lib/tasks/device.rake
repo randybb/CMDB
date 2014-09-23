@@ -57,10 +57,22 @@ namespace :device do
         parsed_hostname = parsed_device_config.hostname
         parsed_interfaces = parsed_device_config.show_interfaces
         parsed_cdp = parsed_device_config.show_cdp
+        parsed_pos = parsed_device_config.show_etherchannels
+
+        device_cdp_neighbors = []
+        parsed_cdp.each do |device|
+          po = parsed_pos.find do |po|
+            po[:ports].find do |port|
+              port[:name] == device[:src_interface_abbr]
+            end
+          end
+          po.nil? ? src_interface_po = nil : src_interface_po = po[:name]
+          device_cdp_neighbors << device.merge(src_interface_po: src_interface_po)
+        end
 
         device.device[:hostname] = parsed_hostname
         device.device[:interfaces] = parsed_interfaces
-        device.device[:neighbors][:cdp] = parsed_cdp
+        device.device[:neighbors][:cdp] = device_cdp_neighbors
         device.timestamps[:parsed_configuration] = created_at
         device.save
         puts "OK"

@@ -38,23 +38,21 @@ class Cmdb::DevicesController < ApplicationController
   end
 
   def show_cdp
-    device = Equipment.where(id: params[:id])
+    device = Equipment.where(id: params[:id]).first
     if device.nil?
       render file: "public/404.html", status: :not_found
     else
-      @device_name = device.first.name
-      @device_id = device.first.id
-      @device_cdp = device.first.device[:neighbors][:cdp]
+      @device_name = device.name
+      @device_id = device.id
+      device_cdp = device.device[:neighbors][:cdp]
 
       @device_cdp_neighbors = []
-      @device_cdp.each do |device|
+      device_cdp.each do |device|
         device_name = device[:hostname].downcase
         infr = Equipment.where(alias: device_name)
-        infrid = ""
-        infrid = infr.first[:id] unless infr.nil?
-        @device_cdp_neighbors << {device: device_name, infrid: infrid}
+        infr.first.nil? ? infrid = '' : infrid = infr.first[:id]
+        @device_cdp_neighbors << device.merge(device: device_name, infrid: infrid)
       end
-      @device = device
     end
   end
 
