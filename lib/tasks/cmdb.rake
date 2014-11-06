@@ -1,5 +1,7 @@
 require 'csv'
 
+Moped::BSON = BSON
+
 def get_records_from_cmdb(query_class)
   records_from = "1970-01-01" #TODO: move to a document in DB + add a document update after update of other documents is done
 
@@ -26,9 +28,10 @@ def get_records_from_cmdb(query_class)
 
     case response
       when Net::HTTPSuccess then
-        csv_data = CSV.new(response.body.force_encoding('ISO-8859-1'), headers: true, header_converters: :symbol, converters: [:all, :blank_to_nil], col_sep: ";", force_quotes: true)
+        csv_data = CSV.new(response.body.force_encoding('ISO-8859-1').gsub("/n", "<br/>"), headers: true, header_converters: :symbol, converters: [:all, :blank_to_nil], col_sep: "\t", force_quotes: true)
         data = csv_data.to_a.map { |row| row.to_hash }
         data[0...-1].each do |record|
+          #CSV.parse(response.body.force_encoding('ISO-8859-1'), headers: true, header_converters: :symbol, converters: [:all, :blank_to_nil], col_sep: ";", force_quotes: true) do |record|
           puts "= #{record[:name]}".colorize(:yellow)
           begin
             case record_class
