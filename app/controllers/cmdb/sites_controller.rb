@@ -1,6 +1,13 @@
 class Cmdb::SitesController < ApplicationController
   def index
-    @sites = Site
+    orgid = params[:orgid]
+    if orgid
+      @sites = Site.where(org_id: orgid)
+      @org_name = Organization.where(id: orgid).first
+    else
+      @sites = Site
+      @org_name = nil
+    end
     infra = Infra.where(id: 'Site').first
     if infra.nil?
       @cmdb_ver = nil

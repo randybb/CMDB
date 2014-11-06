@@ -1,5 +1,9 @@
 Rails.application.routes.draw do
   namespace :cmdb do
+    get 'organizations' => 'organizations#index'
+  end
+
+  namespace :cmdb do
     get 'sites' => 'sites#index'
     get 'sites/update' => 'sites#update_from_cmdb'
     get "sites/:id" => "sites#show", :constraints => {:id => /[\w._\-]*/}

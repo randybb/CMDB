@@ -41,6 +41,7 @@
 
 <%= nav_bar :responsive => :top, :brand => "CMDB", :brand_link => cmdb_sites_path do %>
     <%= menu_group do %>
+        <%= menu_item "Organizations", cmdb_organizations_path %>
         <%= menu_item "Sites", cmdb_sites_path %>
         <%= menu_item "Devices", cmdb_devices_path %>
         <%= menu_item "Interfaces", cmdb_interfaces_path %>
