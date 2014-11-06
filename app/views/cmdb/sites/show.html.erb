@@ -117,3 +117,34 @@
   <% end %>
   </tbody>
 </table>
+
+<table class="table table-striped table-condensed">
+  <thead>
+  <tr>
+    <th>Device</th>
+    <th>VLAN</th>
+    <th>Subnet</th>
+    <th>IP address</th>
+    <th>Description</th>
+  </tr>
+  </thead>
+
+  <tbody>
+  <% @devices.each do |device| %>
+      <% next if device.device.nil? %>
+      <% vlan_ifs = device.device[:interfaces].find_all { |i| /Vlan/.match i[:name] } %>
+      <% vlan_ifs.each do |i| %>
+          <% next if i[:ipv4].nil? %>
+          <tr>
+            <td><%= link_to device[:name], "/cmdb/devices/#{device[:infrid]}" %>
+              <a href="https://r2.grenoble.hp.com/operations/direct/infra/<%= device[:infrid] %>"><span class="fa fa-external-link"></span></a>
+            </td>
+            <td><%= i[:name] %></td>
+            <td><%= NetAddr::CIDR.create("#{i[:ipv4].first[:address]} #{ i[:ipv4].first[:mask]}").to_s %></td>
+            <td><%= i[:ipv4].first[:address] %></td>
+            <td><%= i[:desc] %></td>
+          </tr>
+      <% end %>
+  <% end %>
+  </tbody>
+</table>
