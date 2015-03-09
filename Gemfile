@@ -32,7 +32,7 @@ gem 'less-rails' #Sprockets (what Rails 3.1 uses for its asset pipeline) support
 gem 'twitter-bootstrap-rails'
 
 gem 'colorize'
-gem 'netaddr'
+gem 'ipaddress'
 gem 'cisco_parser', git: 'https://github.com/randybb/cisco_parser'
 
 # MongoDB

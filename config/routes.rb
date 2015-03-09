@@ -6,7 +6,7 @@ Rails.application.routes.draw do
   namespace :cmdb do
     get 'sites' => 'sites#index'
     get 'sites/update' => 'sites#update_from_cmdb'
-    get "sites/:id" => "sites#show", :constraints => {:id => /[\w._\-]*/}
+    get "sites/:id" => "sites#show" #, :constraints => {:id => /[\w._\-]*/}
     get "sites/:id/update_device" => "sites#update_from_devices", :constraints => {:id => /[\w._\-]*/}
   end
 

@@ -9,6 +9,7 @@
     <h4>
       <small>Alias</small> <%= s[:alias] %>
       <small>Acronym</small> <%= s[:site_acro] %></h4>
+    <%= link_to('<span class="fa fa-file-text"></span> Asciidoctor output'.html_safe, {controller: "cmdb/sites", id: s[:infrid], action: "show", format: "adoc"}) %>
   </div>
   <div class="col-xs-1 col-md-1 col-lx-1">
     <p class="text-right">
@@ -135,12 +136,13 @@
       <% vlan_ifs = device.device[:interfaces].find_all { |i| /Vlan/.match i[:name] } %>
       <% vlan_ifs.each do |i| %>
           <% next if i[:ipv4].nil? %>
+          <% ip = IPAddress::IPv4.new("#{i[:ipv4].first[:address]}/#{ i[:ipv4].first[:mask]}") %>
           <tr>
             <td><%= link_to device[:name], "/cmdb/devices/#{device[:infrid]}" %>
               <a href="https://r2.grenoble.hp.com/operations/direct/infra/<%= device[:infrid] %>"><span class="fa fa-external-link"></span></a>
             </td>
             <td><%= i[:name] %></td>
-            <td><%= NetAddr::CIDR.create("#{i[:ipv4].first[:address]} #{ i[:ipv4].first[:mask]}").to_s %></td>
+            <td><%= ip.network.to_string %></td>
             <td><%= i[:ipv4].first[:address] %></td>
             <td><%= i[:desc] %></td>
           </tr>
