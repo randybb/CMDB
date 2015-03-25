@@ -26,6 +26,16 @@ class Cmdb::SitesController < ApplicationController
     end
   end
 
+  def show_dhcp_snooping
+    site = Site.where(id: params[:id])
+    if site.nil?
+      render file: "public/404.html", status: :not_found
+    else
+      @site = site.first
+      @devices = Equipment.where(site_id: params[:id])
+    end
+  end
+
   def update_from_cmdb
     system "rake cmdb:update_sites"
     redirect_to action: 'index'

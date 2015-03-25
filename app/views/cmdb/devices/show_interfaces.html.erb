@@ -14,6 +14,7 @@
     <th>Access VLAN (Voice VLAN)</th>
     <th>Native VLAN</th>
     <th>Trunk VLANs</th>
+    <th>DHCP Snooping</th>
     <th>Shutdown</th>
   </tr>
   </thead>
@@ -28,6 +29,7 @@
         <td><%= interface[:access_vlan] %> <%= ("(#{interface[:voice_vlan]})") if interface[:voice_vlan] %></td>
         <td><%= interface[:trunk_native_vlan] %></td>
         <td><%= interface[:trunk_allowed_vlan] %></td>
+        <td><%= interface[:dhcp_snooping]["trust"] unless interface[:dhcp_snooping].nil? || interface[:dhcp_snooping]["trust"].nil? %></td>
         <td><%= interface[:shutdown] %></td>
       </tr>
   <% end %>

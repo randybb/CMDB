@@ -10,6 +10,7 @@
       <small>Alias</small> <%= s[:alias] %>
       <small>Acronym</small> <%= s[:site_acro] %></h4>
     <%= link_to('<span class="fa fa-file-text"></span> Asciidoctor output'.html_safe, {controller: "cmdb/sites", id: s[:infrid], action: "show", format: "adoc"}) %>
+    <%= link_to(' | <span class="fa fa-file-text"></span> DHCP_Snooping'.html_safe, {controller: "cmdb/sites", id: s[:infrid], action: "show_dhcp_snooping", format: "adoc"}) %>
   </div>
   <div class="col-xs-1 col-md-1 col-lx-1">
     <p class="text-right">
@@ -110,6 +111,8 @@
         <td><%= d["ip"] %></td>
         <td><%= d["step"] %></td>
         <td>
+          <% ( %><a href="rlogin://<%= d[:name] %>"><span class="fa fa-terminal"></span></a>
+          <% ) unless d["ip"].nil? %>
           <%= link_to('<span class="fa fa-file-text"></span>'.html_safe, {controller: "cmdb/devices", id: device[:_id], action: "show_configuration"}) unless device.file_config.nil? %>
           <%= link_to('<span class="fa fa-list-ol"></span>'.html_safe, {controller: "cmdb/devices", id: device[:_id], action: "show_interfaces"}) if device.device && device.device[:interfaces] %>
           <%= link_to('<span class="fa fa-tree"></span>'.html_safe, {controller: "cmdb/devices", id: device[:_id], action: "show_cdp"}) if device.device && device.device[:neighbors] && device.device[:neighbors][:cdp] %>

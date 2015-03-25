@@ -1,0 +1,73 @@
+<%# this is not the correct way how to use MVC view, but it works :) %>
+<% @devices.each do |device| %>
+    <% next unless device.cmdb[:up] == 0 && !device.file_config.nil? && device.cmdb[:brand] == 'Cisco' && device.cmdb[:type] == 'Switch' %>
+
+    <%= device[:name] %>
+    !!
+    ! <%= device[:name] %> (<%= device.cmdb[:ip] %> | <%= device.cmdb[:real_ip] %>)
+    !
+    conf t
+    !
+    <% next if device.device.nil? %>
+    privilege exec level 1 show logging
+    privilege exec level 1 show boot
+    !
+    ! DHCP Snooping:
+    ! <%= device.file_config.gsub!(/(\r|\n)+/, "\n").scan(/^ip dhcp snooping.*$/).join("\n! ") %>
+    !
+    <% vlans = device.file_config.gsub!(/(\r|\n)+/, "\n").scan(/^vlan ([\d]+)$/).join(",").gsub(",1000", "") %>
+    ! VLANs: <%= vlans %>
+    ip dhcp snooping vlan <%= vlans %>
+    no ip dhcp snooping information option
+    ip dhcp snooping
+    !
+    ! IFs:
+    <%
+       device_cdp = device.device[:neighbors][:cdp]
+       device_cdp_neighbors = []
+       device_cdp.each do |device|
+         device_name = device[:hostname].downcase
+         infr = Equipment.where( alias : device_name)
+         infr.first.nil? ? infrid = '' : infrid = infr.first[:id]
+         device_cdp_neighbors << device.merge(device : device_name, infrid : infrid)
+       end
+
+       # there should be a logic for trunk interfaces:
+       # - [ ] trunk with snooping without connected switch, then remove snooping,
+       # - [ ] trunk with connected switch it needs enabled snooping - only for uplinks and to Po interface,
+       # - [X] access with snoopingm then remove it, but it needs to be checked...
+       trunk_ifs = device.device[:interfaces].find_all { |i| /trunk/.match i[:mode] }
+       dhcp_snooping_ifs = device.device[:interfaces].find_all { |i| i[:dhcp_snooping] }
+       ifs = trunk_ifs | dhcp_snooping_ifs
+
+       ifs.each do |i|
+         cdp_device = device_cdp_neighbors.find { |device| /#{i[:name]}/.match device[:src_interface] }
+    %>
+        <%= "! #{i[:name]}, #{i[:desc]}, #{i[:mode]}, #{i[:dhcp_snooping].nil? ? false : true}, #{cdp_device[:hostname] if cdp_device}, #{cdp_device[:src_interface_po] if cdp_device}, #{/Switch/.match(cdp_device[:capabilities]) if cdp_device}" %>
+        <% if i[:dhcp_snooping] && /access/.match(i[:mode]) %>
+            ! ACCESS: "<%= i[:desc] %>" is a DHCP server, WLC, Firewall or WAN?
+            interface <%= i[:name] %>
+            no ip dhcp snooping trust
+            !
+        <% end # if  %>
+        <% if cdp_device %>
+            <% if i[:dhcp_snooping].nil? && /trunk/.match(i[:mode]) && /Switch/.match(cdp_device[:capabilities]) && !/Po/.match(cdp_device[:src_interface_po]) %>
+                ! TRUNK: "<%= i[:desc] %>" is this an uplink swith? In this case is DHCP snooping needed
+                interface <%= i[:name] %>
+                ip dhcp snooping trust
+                !
+            <% end # if  %>
+        <% else %>
+            <% if i[:dhcp_snooping].nil? && /trunk/.match(i[:mode]) && /Port/.match(i[:name]) %>
+                ! TRUNK: "<%= i[:desc] %>" is this an uplink swith? In this case is DHCP snooping needed
+                interface <%= i[:name] %>
+                ip dhcp snooping trust
+                !
+            <% end # if  %>
+        <% end # if  %>
+    <% end #each   %>
+    !
+    end
+    !
+    wr
+<% end %>
