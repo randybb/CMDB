@@ -141,7 +141,7 @@
           <% next if i[:ipv4].nil? %>
           <% ip = IPAddress::IPv4.new("#{i[:ipv4].first[:address]}/#{ i[:ipv4].first[:mask]}") %>
           <tr>
-            <td><%= link_to device[:name], "/cmdb/devices/#{device[:infrid]}" %>
+            <td><%= link_to device[:name], "/cmdb/devices/#{device.cmdb[:infrid]}" %>
               <a href="https://r2.grenoble.hp.com/operations/direct/infra/<%= device[:infrid] %>"><span class="fa fa-external-link"></span></a>
             </td>
             <td><%= i[:name] %></td>
