@@ -27,9 +27,9 @@
        device_cdp_neighbors = []
        device_cdp.each do |device|
          device_name = device[:hostname].downcase
-         infr = Equipment.where( alias : device_name)
+         infr = Equipment.where(alias: device_name)
          infr.first.nil? ? infrid = '' : infrid = infr.first[:id]
-         device_cdp_neighbors << device.merge(device : device_name, infrid : infrid)
+         device_cdp_neighbors << device.merge(device: device_name, infrid: infrid)
        end
 
        # there should be a logic for trunk interfaces:
