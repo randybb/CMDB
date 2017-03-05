@@ -4,7 +4,7 @@ class Cmdb::InterfacesController < ApplicationController
   end
 
   def show
-    interface = Interface.where(id: params[:id])
+    interface = Interface.where(infra_id: params[:id])
     if interface.nil?
       render file: "public/404.html", status: :not_found
     else

@@ -2,8 +2,7 @@ source 'https://rubygems.org'
 
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-#gem 'rails', '4.1.7'
-gem 'rails', '4.2.1'
+gem 'rails', '4.2.8'
 # Use sqlite3 as the database for Active Record
 gem 'sqlite3'
 # Use SCSS for stylesheets
@@ -43,7 +42,8 @@ gem 'moped'
 gem 'awesome_print', group: :development
 gem 'interactive_editor', group: :development
 gem 'wirble', group: :development
-gem 'web-console', '~> 2.0', group: :development
+#gem 'web-console', '~> 2.0', group: :development
+gem 'nokogiri', group: :development
 
 # Use ActiveModel has_secure_password
 # gem 'bcrypt', '~> 3.1.7'

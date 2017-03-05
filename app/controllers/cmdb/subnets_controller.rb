@@ -4,7 +4,7 @@ class Cmdb::SubnetsController < ApplicationController
   end
 
   def show
-    subnet = Subnet.where(id: params[:id])
+    subnet = Subnet.where(infra_id: params[:id])
     if subnet.nil?
       render file: "public/404.html", status: :not_found
     else

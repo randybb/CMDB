@@ -14,10 +14,11 @@
   </div>
   <div class="col-xs-1 col-md-1 col-lx-1">
     <p class="text-right">
+      <%= link_to('<button type="button" class="btn btn-primary btn-sm">Create project files</button><br />'.html_safe, {action: "create_project_files"}) %>
       <%= link_to('<button type="button" class="btn btn-primary btn-sm">Update from devices</button><br />'.html_safe, {action: "update_from_devices"}) %>
-      <small>Created at</small> <%= s[:creationdate].to_s(:custom_short) %>
+      <small>Created at</small> <%= DateTime.parse(s[:creationdate]).to_s(:custom_short) %>
       <br/>
-      <small>Updated at</small> <%= s[:lastchangedate].to_s(:custom_short) %>
+      <small>Updated at</small> <%= DateTime.parse(s[:lastchangedate]).to_s(:custom_short) %>
     </p>
   </div>
 </div>
@@ -28,7 +29,7 @@
         <th>Parent site</th>
         <td><%= s[:up_value] %>(id: <%= s[:up] %>)</td>
       </tr>
-  <% ) if s[:up] > 0 %>
+  <% ) if (s[:up]).to_i > 0 %>
   <tr>
     <th>Type</th>
     <td><%= s[:type] %></td>
@@ -75,15 +76,15 @@
   <% ( %>
       <tr>
         <th>Moved to production</th>
-        <td><%= s[:first_mtp_date].to_s(:custom_short) %></td>
+        <td><%= DateTime.parse(s[:first_mtp_date]).to_s(:custom_short) %></td>
       </tr>
-  <% ) unless (s[:first_mtp_date].nil? || s[:first_mtp_date] == "0000-00-00 00:00:00") %>
+  <% ) unless (s[:first_mtp_date].empty? || s[:first_mtp_date] == "0000-00-00 00:00:00") %>
   <% ( %>
       <tr>
         <th>Moved to obsolete</th>
-        <td><%= s[:last_obsolete_date].to_s(:custom_short) %></td>
+        <td><%= DateTime.parse(s[:last_obsolete_date]).to_s(:custom_short) %></td>
       </tr>
-  <% ) unless (s[:last_obsolete_date].nil? || s[:last_obsolete_date] == "0000-00-00 00:00:00") %>
+  <% ) unless (s[:last_obsolete_date].empty? || s[:last_obsolete_date] == "0000-00-00 00:00:00") %>
   </tbody>
 </table>
 

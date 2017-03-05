@@ -18,9 +18,9 @@
   <div class="col-xs-1 col-md-1 col-lx-1">
     <p class="text-right">
       <%= link_to('<button type="button" class="btn btn-primary btn-sm">Update from device</button><br />'.html_safe, {action: "update_from_device"}) %>
-      <small>Created at</small> <%= d[:creationdate].to_s(:custom_short) %>
+      <small>Created at</small> <%= DateTime.parse(d[:creationdate]).to_s(:custom_short) %>
       <br/>
-      <small>Updated at</small> <%= d[:lastchangedate].to_s(:custom_short) %>
+      <small>Updated at</small> <%= DateTime.parse(d[:lastchangedate]).to_s(:custom_short) %>
       <br/>
       <small>Dev updated at
       </small> <%= Time.parse(@device.timestamps[:parsed_configuration]).strftime(Time::DATE_FORMATS[:custom_short]) unless @device.timestamps.nil? %>
@@ -38,7 +38,7 @@
           <small>id: <%= d[:up] %></small>
         </td>
       </tr>
-  <% ) if d[:up].present? && d[:up] > 0 %>
+  <% ) if d[:up].present? && d[:up].to_i > 0 %>
   <tr>
     <th>Mgmt IP Address</th>
     <td><%= d[:ip] %> <%= d[:ip_mask] %></td>
@@ -56,7 +56,7 @@
         <th>Peer ID</th>
         <td><%= d[:peerid] %></td>
       </tr>
-  <% ) if d[:peerid].present? && d[:peerid] > 0 %>
+  <% ) if d[:peerid].present? && d[:peerid].to_i > 0 %>
   <tr>
     <th>Site</th>
     <td>
@@ -201,14 +201,14 @@
   <% ( %>
       <tr>
         <th>Moved to production</th>
-        <td><%= d[:first_mtp_date].to_s(:custom_short) %></td>
+        <td><%= DateTime.parse(d[:first_mtp_date]).to_s(:custom_short) %></td>
       </tr>
-  <% ) unless (d[:first_mtp_date].nil? || d[:first_mtp_date] == "0000-00-00 00:00:00") %>
+  <% ) unless (d[:first_mtp_date].empty? || d[:first_mtp_date] == "0000-00-00 00:00:00") %>
   <% ( %>
       <tr>
         <th>Moved to obsolete</th>
-        <td><%= d[:last_obsolete_date].to_s(:custom_short) %></td>
+        <td><%= DateTime.parse(d[:last_obsolete_date]).to_s(:custom_short) %></td>
       </tr>
-  <% ) unless (d[:last_obsolete_date].nil? || d[:last_obsolete_date] == "0000-00-00 00:00:00") %>
+  <% ) unless (d[:last_obsolete_date].empty? || d[:last_obsolete_date] == "0000-00-00 00:00:00") %>
   </tbody>
 </table>

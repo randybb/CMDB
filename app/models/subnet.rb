@@ -3,7 +3,7 @@ class Subnet
   include Mongoid::Timestamps
 
   field :infrid, type: Integer
-  field :_id, type: String, default: -> { infrid }
+  field :infra_id, type: Integer
   field :org_id, type: Integer
   field :name, type: String
   field :cmdb, type: Hash

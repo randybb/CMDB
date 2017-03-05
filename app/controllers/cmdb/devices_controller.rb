@@ -1,7 +1,16 @@
 class Cmdb::DevicesController < ApplicationController
   def index
-    @devices = Equipment
-    infra = Infra.where(id: 'Equipment').first
+    orgid = params[:orgid]
+    if orgid
+      @devices = Equipment.where(org_id: orgid)
+      @org_id = orgid
+      @org_name = Organization.where(infra_id: orgid).first
+    else
+      @devices = Equipment
+      @org_id = orgid
+      @org_name = nil
+    end
+    infra = Infra.where(name: 'Equipment').first
     if infra.nil?
       @cmdb_ver = nil
     else
@@ -10,7 +19,7 @@ class Cmdb::DevicesController < ApplicationController
   end
 
   def show
-    device = Equipment.where(id: params[:id])
+    device = Equipment.where(infra_id: params[:id])
     if device.nil?
       render file: "public/404.html", status: :not_found
     else
@@ -19,7 +28,7 @@ class Cmdb::DevicesController < ApplicationController
   end
 
   def show_configuration
-    device = Equipment.where(id: params[:id])
+    device = Equipment.where(infra_id: params[:id])
     if device.nil?
       render file: "public/404.html", status: :not_found
     else
@@ -29,7 +38,7 @@ class Cmdb::DevicesController < ApplicationController
   end
 
   def show_interfaces
-    device = Equipment.where(id: params[:id])
+    device = Equipment.where(infra_id: params[:id])
     if device.nil?
       render file: "public/404.html", status: :not_found
     else
@@ -38,7 +47,7 @@ class Cmdb::DevicesController < ApplicationController
   end
 
   def show_cdp
-    device = Equipment.where(id: params[:id]).first
+    device = Equipment.where(infra_id: params[:id]).first
     if device.nil?
       render file: "public/404.html", status: :not_found
     else
