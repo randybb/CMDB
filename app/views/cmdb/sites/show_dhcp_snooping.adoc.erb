@@ -2,26 +2,17 @@
 <% @devices.each do |device| %>
     <% next unless device.cmdb[:up] == 0 && !device.file_config.nil? && device.cmdb[:brand] == 'Cisco' && device.cmdb[:type] == 'Switch' %>
 
-    <%= device[:name] %>
-    !!
-    ! <%= device[:name] %> (<%= device.cmdb[:ip] %> | <%= device.cmdb[:real_ip] %>)
-    !
-    conf t
-    !
+<%= device[:name] %>
+!!
+! <%= device[:name] %> (<%= device.cmdb[:ip] %> | <%= device.cmdb[:real_ip] %>)
+!
+conf t
+!
     <% next if device.device.nil? %>
-    privilege exec level 1 show logging
-    privilege exec level 1 show boot
-    !
-    ! DHCP Snooping:
-    ! <%= device.file_config.gsub!(/(\r|\n)+/, "\n").scan(/^ip dhcp snooping.*$/).join("\n! ") %>
-    !
-    <% vlans = device.file_config.gsub!(/(\r|\n)+/, "\n").scan(/^vlan ([\d]+)$/).join(",").gsub(",1000", "") %>
-    ! VLANs: <%= vlans %>
-    ip dhcp snooping vlan <%= vlans %>
-    no ip dhcp snooping information option
-    ip dhcp snooping
-    !
-    ! IFs:
+privilege exec level 1 show logging
+privilege exec level 1 show boot
+!
+! IFs:
     <%
        device_cdp = device.device[:neighbors][:cdp]
        device_cdp_neighbors = []
@@ -43,31 +34,40 @@
        ifs.each do |i|
          cdp_device = device_cdp_neighbors.find { |device| /#{i[:name]}/.match device[:src_interface] }
     %>
-        <%= "! #{i[:name]}, #{i[:desc]}, #{i[:mode]}, #{i[:dhcp_snooping].nil? ? false : true}, #{cdp_device[:hostname] if cdp_device}, #{cdp_device[:src_interface_po] if cdp_device}, #{/Switch/.match(cdp_device[:capabilities]) if cdp_device}" %>
+<%= "! #{i[:name]}, #{i[:desc]}, #{i[:mode]}, #{i[:dhcp_snooping].nil? ? false : true}, #{cdp_device[:hostname] if cdp_device}, #{cdp_device[:src_interface_po] if cdp_device}, #{/Switch/.match(cdp_device[:capabilities]) if cdp_device}" %>
         <% if i[:dhcp_snooping] && /access/.match(i[:mode]) %>
-            ! ACCESS: "<%= i[:desc] %>" is a DHCP server, WLC, Firewall or WAN?
-            interface <%= i[:name] %>
-            no ip dhcp snooping trust
-            !
+! ACCESS: "<%= i[:desc] %>" is a DHCP server, WLC, Firewall or WAN?
+interface <%= i[:name] %>
+ no ip dhcp snooping trust
+!
         <% end # if  %>
         <% if cdp_device %>
             <% if i[:dhcp_snooping].nil? && /trunk/.match(i[:mode]) && /Switch/.match(cdp_device[:capabilities]) && !/Po/.match(cdp_device[:src_interface_po]) %>
-                ! TRUNK: "<%= i[:desc] %>" is this an uplink swith? In this case is DHCP snooping needed
-                interface <%= i[:name] %>
-                ip dhcp snooping trust
-                !
+! TRUNK: "<%= i[:desc] %>" is this an uplink swith? In this case is DHCP snooping needed
+interface <%= i[:name] %>
+ ip dhcp snooping trust
+!
             <% end # if  %>
         <% else %>
             <% if i[:dhcp_snooping].nil? && /trunk/.match(i[:mode]) && /Port/.match(i[:name]) %>
-                ! TRUNK: "<%= i[:desc] %>" is this an uplink swith? In this case is DHCP snooping needed
-                interface <%= i[:name] %>
-                ip dhcp snooping trust
-                !
+! TRUNK: "<%= i[:desc] %>" is this an uplink swith? In this case is DHCP snooping needed
+interface <%= i[:name] %>
+ ip dhcp snooping trust
+!
             <% end # if  %>
         <% end # if  %>
     <% end #each   %>
-    !
-    end
-    !
-    wr
+!
+! DHCP Snooping:
+! <%= device.file_config.gsub!(/(\r|\n)+/, "\n").scan(/^ip dhcp snooping.*$/).join("\n! ") %>
+!
+    <% vlans = device.file_config.gsub!(/(\r|\n)+/, "\n").scan(/^vlan ([\d]+)$/).join(",").gsub(",1000", "") %>
+! VLANs: <%= vlans %>
+ip dhcp snooping vlan <%= vlans %>
+no ip dhcp snooping information option
+ip dhcp snooping
+!
+end
+!
+wr
 <% end %>

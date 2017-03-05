@@ -1,16 +1,52 @@
-.VLANs
-<% @devices.each do |device| %>
-  <% next if device.device.nil? %>
-  <% vlan_ifs = device.device[:interfaces].find_all { |i| /Vlan/.match i[:name] } %>
-  <% vlan_ifs.each do |i| %>
-    <% next if i[:ipv4].nil? %>
-    <% ip = IPAddress::IPv4.new("#{i[:ipv4].first[:address]}/#{ i[:ipv4].first[:mask]}") %>
-- <%= i[:name] %>, <%= ip.network.to_string %> (.<%= ip.octets[3] %>), <%= i[:desc] %> # <%= device[:name] %>
-  <% end %>
-<% end %>
+<% s = @site.cmdb %>
+= Wartsila LAN Refresh: <%= s[:country] %>, <%= s[:name] %>
+Roman Priesol <rpriesol@hpe.com>
+:numbered:
+//:toc2:
+:stylesdir: /home/roman.priesol/.asciidoctor/stylesheets/
+:stylesheet: rocket-panda.css
+:data-uri:
+:icons: font
+:awesome-icons:
+:source-highlighter: pygments
+:pygments-style: pastie
+:nofooter:
 
-.Devices
+- CMDB+ site: https://r2.grenoble.hp.com/operations/direct/infra/<%= s[:infrid] %>
+- MyCMDB: http://localhost:3000/cmdb/sites/<%= s[:infrid] %>
+- Aldea project: https://eu-i.serviceportal.hp.com/aldea/srm/workbook.aspx?ProjectID=
+- Aldea task: https://eu-i.serviceportal.hp.com/aldea/srm/request_edit.aspx?RequestID=
+
+.Address
+----
+<%= @site.cmdb[:address].gsub(/, */, "\n") %>
+----
+
+.Equipment
 <% @devices.each do |device| %>
 <% d = device[:cmdb] %>
-- <%= d["name"] %> (<%= d["ip"] %> | <%= d["real_ip"] %>)
+<% if ((d[:step] == "production") && (d[:type] == "Switch")) %>
+- <%= d[:name] %> | <%= d[:floor].gsub(/[nN]\/[aA]/, "").gsub(/\:{2,}/, "") %> | <%= d[:model_nb] %>
 <% end %>
+<% end %>
+
+.Equipment (other)
+<% @devices.each do |device| %>
+<% d = device[:cmdb] %>
+<% if ((d[:step] == "production") && (d[:type] != "Switch")) %>
+- <%= d[:name] %> | <%= d[:floor].gsub(/[nN]\/[aA]/, "").gsub(/\:{2,}/, "") %> | <%= d[:model_nb] %>
+<% end %>
+<% end %>
+
+.Quote
+----
+<% @devices.each do |device| %>
+<% d = device[:cmdb] %>
+<% if ((d[:step] == "production") && (d[:type] == "Switch")) %>
+- <%= d[:name] %>, <%= d[:floor].gsub(/[nN]\/[aA]/, "").gsub(/\:{2,}/, "") %>: <%= d[:model_nb] %>
+<% end %>
+<% end %>
+----
+
+.Status
+- 
