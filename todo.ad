@@ -1,9 +1,10 @@
 = TODO
 
 - [*] Move from "Couch" to "CouchPotato"
+- [*] And final move to Mongo
 - [*] Create and Update records
 * [ ] and add a trigger to it
-* [ ] and move from db:seed task to normal task and link together
+* [*] and move from db:seed task to normal task and link together
 - [*] Download configs from Devices (Equipment) as attachments
 - [*] Parse downloaded configs
 * [*] configuration

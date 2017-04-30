@@ -1,0 +1,31 @@
+.VLANs
+<% @devices.each do |device| %>
+  <% next if device.device.nil? %>
+  <% vlan_ifs = device.device[:interfaces].find_all { |i| /Vlan/.match i[:name] } %>
+  <% vlan_ifs.each do |i| %>
+    <% next if i[:ipv4].nil? %>
+    <% ip = IPAddress::IPv4.new("#{i[:ipv4].first[:address]}/#{ i[:ipv4].first[:mask]}") %>
+- <%= i[:name] %>, <%= ip.network.to_string %> (.<%= ip.octets[3] %>), <%= i[:desc] %> # <%= device[:name] %>
+  <% end %>
+<% end %>
+
+.Devices
+<% @devices.each do |device| %>
+<% d = device[:cmdb] %>
+<% if ((d[:step] == "production") && (d[:type] == "Switch")) %>
+- <%= d[:name] %>, <%= d[:floor].gsub(/n\/a/, "").gsub(/\:{2,}/, "") %>: <%= d[:model_nb] %>
+<% end %>
+<% end %>
+
+.Devices (other)
+<% @devices.each do |device| %>
+<% d = device[:cmdb] %>
+<% if ((d[:step] == "production") && (d[:type] != "Switch")) %>
+- <%= d[:name] %> | <%= d[:floor].gsub(/n\/a/, "").gsub(/\:{2,}/, "") %> | <%= d[:model_nb] %>
+<% end %>
+<% end %>
+
+.Contact
+----
+<%= @site.cmdb[:address] %>
+----

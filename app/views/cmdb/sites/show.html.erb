@@ -14,8 +14,8 @@
   </div>
   <div class="col-xs-1 col-md-1 col-lx-1">
     <p class="text-right">
-      <%= link_to('<button type="button" class="btn btn-primary btn-sm">Create project files</button><br />'.html_safe, {action: "create_project_files"}) %>
-      <%= link_to('<button type="button" class="btn btn-primary btn-sm">Update from devices</button><br />'.html_safe, {action: "update_from_devices"}) %>
+      <%= link_to('<button type="button" class="btn btn-primary btn-sm pull-right">Create project files</button><br />'.html_safe, {action: "create_project_files"}) %>
+      <%= link_to('<button type="button" class="btn btn-primary btn-sm pull-right">Update from devices</button><br />'.html_safe, {action: "update_from_devices"}) %>
       <small>Created at</small> <%= DateTime.parse(s[:creationdate]).to_s(:custom_short) %>
       <br/>
       <small>Updated at</small> <%= DateTime.parse(s[:lastchangedate]).to_s(:custom_short) %>
