@@ -10,8 +10,8 @@
       <small>Alias</small> <%= d[:alias_equipment] %></h4>
     <p>
       <a href="rlogin://<%= d[:name] %>"><span class="fa fa-terminal"></span> Terminal</a>
-      <%= link_to(' | <span class="fa fa-file-text"></span> Configuration'.html_safe, {controller: "cmdb/devices", id: @device[:_id], action: "show_configuration"}) unless @device.file_config.nil? %>
-      <%= link_to(' | <span class="fa fa-list-ol"></span> Show Interfaces'.html_safe, {controller: "cmdb/devices", id: @device[:_id], action: "show_interfaces"}) if @device.device && @device.device[:interfaces] %>
+      <%= link_to(' | <span class="fa fa-file-text"></span> Configuration'.html_safe, {controller: "cmdb/devices", id: @device[:infra_id], action: "show_configuration"}) unless @device.file_config.nil? %>
+      <%= link_to(' | <span class="fa fa-list-ol"></span> Show Interfaces'.html_safe, {controller: "cmdb/devices", id: @device[:infra_id], action: "show_interfaces"}) if @device.device && @device.device[:interfaces] %>
       <%= link_to(' | <span class="fa fa-tree"></span> Show CDP'.html_safe, {controller: "cmdb/devices", id: @device[:_id], action: "show_cdp"}) if @device.device && @device.device[:neighbors] && @device.device[:neighbors][:cdp] %>
     </p>
   </div>
@@ -23,7 +23,7 @@
       <small>Updated at</small> <%= DateTime.parse(d[:lastchangedate]).to_s(:custom_short) %>
       <br/>
       <small>Dev updated at
-      </small> <%= Time.parse(@device.timestamps[:parsed_configuration]).strftime(Time::DATE_FORMATS[:custom_short]) unless @device.timestamps.nil? %>
+      </small> <%= DateTime.parse(@device.timestamps[:configuration]).to_s(:custom_short) unless @device.timestamps.nil? %>
       <br/>
     </p>
   </div>

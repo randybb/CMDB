@@ -9,6 +9,7 @@ Rails.application.routes.draw do
     get 'sites/update' => 'sites#update_from_cmdb'
     get "sites/:id" => "sites#show" #, :constraints => {:id => /[\w._\-]*/}
     get "sites/:id/dhcp_snooping" => "sites#show_dhcp_snooping"
+		get "sites/:id/cmdb_export" => "sites#show_cmdb_export"
     get "sites/:id/update_device" => "sites#update_from_devices", :constraints => {:id => /[\w._\-]*/}
     get "sites/:id/create_project_files" => "sites#create_project_files", :constraints => {:id => /[\w._\-]*/}
   end

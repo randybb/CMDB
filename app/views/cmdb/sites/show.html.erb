@@ -10,6 +10,7 @@
       <small>Alias</small> <%= s[:alias] %>
       <small>Acronym</small> <%= s[:site_acro] %></h4>
     <%= link_to('<span class="fa fa-file-text"></span> Asciidoctor output'.html_safe, {controller: "cmdb/sites", id: s[:infrid], action: "show", format: "adoc"}) %>
+    <%= link_to('<span class="fa fa-file-text"></span> CMDB+ CSV export'.html_safe, {controller: "cmdb/sites", id: s[:infrid], action: "show_cmdb_export", format: "csv"}) %>
     <%= link_to(' | <span class="fa fa-file-text"></span> DHCP_Snooping'.html_safe, {controller: "cmdb/sites", id: s[:infrid], action: "show_dhcp_snooping", format: "adoc"}) %>
   </div>
   <div class="col-xs-1 col-md-1 col-lx-1">
@@ -89,6 +90,69 @@
 </table>
 
 <table class="table table-striped table-condensed">
+  <caption>Production && Switch</caption>
+  <thead>
+  <tr>
+    <th>Name</th>
+    <th>Model</th>
+    <th></th>
+  </tr>
+  </thead>
+
+  <tbody>
+  <% @devices.select{|d|(d[:cmdb][:step] == "production") && ((d[:cmdb][:type] == "Switch") || (d[:cmdb][:type] == "Routing Switch"))}.each do |device| %>
+      <% d = device[:cmdb] %>
+      <tr>
+        <td><%= link_to d[:name], "/cmdb/devices/#{d[:infrid]}" %>
+          <a href="https://r2.grenoble.hp.com/operations/direct/infra/<%= d[:infrid] %>"><span class="fa fa-external-link"></span></a>
+        </td>
+        <td><%= d["model_nb"] %></td>
+        <td>
+          <%= '<span class="fa fa-fire"></span>'.html_safe if device[:scope] %>
+          <% ( %><a href="rlogin://<%= d[:name] %>"><span class="fa fa-terminal"></span></a>
+          <% ) unless d["ip"].nil? %>
+          <%= link_to('<span class="fa fa-file-text"></span>'.html_safe, {controller: "cmdb/devices", id: device[:infra_id], action: "show_configuration"}) unless device.file_config.nil? %>
+          <%= link_to('<span class="fa fa-list-ol"></span>'.html_safe, {controller: "cmdb/devices", id: device[:infra_id], action: "show_interfaces"}) if device.device && device.device[:interfaces] %>
+          <%= link_to('<span class="fa fa-tree"></span>'.html_safe, {controller: "cmdb/devices", id: device[:infra_id], action: "show_cdp"}) if device.device && device.device[:neighbors] && device.device[:neighbors][:cdp] %>
+        </td>
+      </tr>
+  <% end %>
+  </tbody>
+</table>
+
+<table class="table table-striped table-condensed">
+  <caption>Production && Not Switch</caption>
+  <thead>
+  <tr>
+    <th>Name</th>
+    <th>Model</th>
+    <th></th>
+  </tr>
+  </thead>
+
+  <tbody>
+  <% @devices.select{|d|(d[:cmdb][:step] == "production") && !((d[:cmdb][:type] == "Switch") || (d[:cmdb][:type] == "Routing Switch"))}.each do |device| %>
+      <% d = device[:cmdb] %>
+      <tr>
+        <td><%= link_to d[:name], "/cmdb/devices/#{d[:infrid]}" %>
+          <a href="https://r2.grenoble.hp.com/operations/direct/infra/<%= d[:infrid] %>"><span class="fa fa-external-link"></span></a>
+        </td>
+        <td><%= d["model_nb"] %></td>
+        <td>
+          <%= '<span class="fa fa-fire"></span>'.html_safe if device[:scope] %>
+          <% ( %><a href="rlogin://<%= d[:name] %>"><span class="fa fa-terminal"></span></a>
+          <% ) unless d["ip"].nil? %>
+          <%= link_to('<span class="fa fa-file-text"></span>'.html_safe, {controller: "cmdb/devices", id: device[:infra_id], action: "show_configuration"}) unless device.file_config.nil? %>
+          <%= link_to('<span class="fa fa-list-ol"></span>'.html_safe, {controller: "cmdb/devices", id: device[:infra_id], action: "show_interfaces"}) if device.device && device.device[:interfaces] %>
+          <%= link_to('<span class="fa fa-tree"></span>'.html_safe, {controller: "cmdb/devices", id: device[:infra_id], action: "show_cdp"}) if device.device && device.device[:neighbors] && device.device[:neighbors][:cdp] %>
+        </td>
+      </tr>
+  <% end %>
+  </tbody>
+</table>
+
+<table class="table table-striped table-condensed">
+  <caption>All devices</caption>
   <thead>
   <tr>
     <th>Name</th>
@@ -112,11 +176,12 @@
         <td><%= d["ip"] %></td>
         <td><%= d["step"] %></td>
         <td>
+          <%= '<span class="fa fa-fire"></span>'.html_safe if device[:scope] %>
           <% ( %><a href="rlogin://<%= d[:name] %>"><span class="fa fa-terminal"></span></a>
           <% ) unless d["ip"].nil? %>
-          <%= link_to('<span class="fa fa-file-text"></span>'.html_safe, {controller: "cmdb/devices", id: device[:_id], action: "show_configuration"}) unless device.file_config.nil? %>
-          <%= link_to('<span class="fa fa-list-ol"></span>'.html_safe, {controller: "cmdb/devices", id: device[:_id], action: "show_interfaces"}) if device.device && device.device[:interfaces] %>
-          <%= link_to('<span class="fa fa-tree"></span>'.html_safe, {controller: "cmdb/devices", id: device[:_id], action: "show_cdp"}) if device.device && device.device[:neighbors] && device.device[:neighbors][:cdp] %>
+          <%= link_to('<span class="fa fa-file-text"></span>'.html_safe, {controller: "cmdb/devices", id: device[:infra_id], action: "show_configuration"}) unless device.file_config.nil? %>
+          <%= link_to('<span class="fa fa-list-ol"></span>'.html_safe, {controller: "cmdb/devices", id: device[:infra_id], action: "show_interfaces"}) if device.device && device.device[:interfaces] %>
+          <%= link_to('<span class="fa fa-tree"></span>'.html_safe, {controller: "cmdb/devices", id: device[:infra_id], action: "show_cdp"}) if device.device && device.device[:neighbors] && device.device[:neighbors][:cdp] %>
         </td>
       </tr>
   <% end %>
@@ -124,6 +189,7 @@
 </table>
 
 <table class="table table-striped table-condensed">
+  <caption>List of VLANs</caption>
   <thead>
   <tr>
     <th>Device</th>

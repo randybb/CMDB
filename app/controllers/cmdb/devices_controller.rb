@@ -75,6 +75,6 @@ class Cmdb::DevicesController < ApplicationController
     device_ids << params[:id]
 
     system "rake device:default#{device_ids.to_s.gsub(' ', '')}"
-    redirect_to :back
+    redirect_back(fallback_location: cmdb_sites_path)
   end
 end

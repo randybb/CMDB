@@ -1,5 +1,7 @@
 require_relative 'boot'
 
+require "csv"
+require "cisco_parser"
 #require 'rails/all'
 require "rails"
 # Pick the frameworks you want:
