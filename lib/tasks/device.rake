@@ -2,17 +2,23 @@ def clogin(ip_address, filename)
   `clogin -x ~/.clogin/show #{ip_address} | tee #{filename}`
 end
 
+def hlogin(hostname, filename)
+  `ssh idajmpl02 "./hlogin-new #{hostname}" | sed "s/\r//g" | tee #{filename}`
+end
+
 namespace :device do
   desc "Get and Parse"
-  task :default => [:get_configuration, :parse_configuration]
+  task :default => [:get_configuration]
+  #task :default => [:get_configuration, :parse_configuration]
 
   desc 'Run show commands on a device and store it to Equipment.file_config'
   task :get_configuration => :environment do |task, params|
     puts "== Downloading configurations"
     params.extras.each do |device_id|
-      device = Equipment.where(id: device_id).first
+      device = Equipment.where(infra_id: device_id).first
 
-      puts "= #{device.name} (#{device.id})"
+      puts "= #{device.name} (#{device.infra_id})"
+      # Cisco devices
       if device.cmdb[:up] == 0 && device.cmdb[:brand] == 'Cisco' && device.cmdb[:type] == 'Switch' && device.cmdb[:step] == 'production'
         created_at = DateTime.now.utc.to_s
         temp_file = "tmp/#{device[:name]}.txt"
@@ -28,8 +34,26 @@ namespace :device do
         device.save
         puts "OK"
         File.delete temp_file
+      # HP/Aruba devices, or simplier "not Cisco"
+      elsif (%w[Aruba HP HPE].include? device.cmdb[:brand]) && (device.cmdb[:type] == 'Switch' || device.cmdb[:type] == 'Routing Switch') && device.cmdb[:step] == 'production'
+        created_at = DateTime.now.utc.to_s
+        temp_file = "tmp/#{device[:name]}.txt"
+
+        device.timestamps = {} if device.timestamps.nil?
+
+        hlogin(device.cmdb[:name], temp_file)
+
+        device_configuration = File.read(temp_file)
+        device.file_config = device_configuration
+
+        device.timestamps[:configuration] = created_at
+        device.save
+        puts "OK"
+        File.delete temp_file
+	  # and other devices
       else
-        puts "is a slave device for #{device.cmdb[:up_value]}!"
+        puts "is a slave device for #{device.cmdb[:up_value]}!" unless device.cmdb[:up_value].empty?
+		puts "#{device.cmdb[:brand]} / #{device.cmdb[:type]} / #{device.cmdb[:step]}"
       end
     end
   end
