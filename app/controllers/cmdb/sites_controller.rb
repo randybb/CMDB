@@ -2,11 +2,11 @@ class Cmdb::SitesController < ApplicationController
   def index
     orgid = params[:orgid]
     if orgid
-      @sites = Site.where(org_id: orgid)
+      @sites = Site.where(org_id: orgid).order_by(name: 'asc')
       @org_id = orgid
       @org_name = Organization.where(id: orgid).first
     else
-      @sites = Site
+      @sites = Site.order_by(name: 'asc')
       @org_id = orgid
       @org_name = nil
     end
@@ -90,7 +90,7 @@ class Cmdb::SitesController < ApplicationController
       render file: "public/404.html", status: :not_found
     else
       @site = site.first
-      @devices = Equipment.where(site_id: params[:id])
+      @devices = Equipment.where(site_id: params[:id]).order_by(name: 'asc')
     end
 		
 		csv_output = CSV.generate(headers: true) do |csv|
@@ -217,7 +217,7 @@ class Cmdb::SitesController < ApplicationController
       render file: "public/404.html", status: :not_found
     else
       @site = site.first
-      @devices = Equipment.where(site_id: params[:id])
+      @devices = Equipment.where(site_id: params[:id]).order_by(name: 'asc')
     end
   end
 

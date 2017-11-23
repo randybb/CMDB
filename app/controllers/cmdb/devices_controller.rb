@@ -2,7 +2,7 @@ class Cmdb::DevicesController < ApplicationController
   def index
     orgid = params[:orgid]
     if orgid
-      @devices = Equipment.where(org_id: orgid)
+      @devices = Equipment.where(org_id: orgid).order_by(name: 'asc')
       @org_id = orgid
       @org_name = Organization.where(infra_id: orgid).first
     else

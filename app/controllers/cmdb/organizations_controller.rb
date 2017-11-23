@@ -1,6 +1,6 @@
 class Cmdb::OrganizationsController < ApplicationController
   def index
-    @orgs = Organization
+    @orgs = Organization.order_by(name: 'asc')
   end
 
   def show
