@@ -7,7 +7,7 @@ git_source(:github) do |repo_name|
 end
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '~> 5.0.2'
+gem 'rails', '~> 5.0.6'
 # Use Puma as the app server
 gem 'puma', '~> 3.0'
 # Use sqlite3 as the database for Active Record
@@ -46,10 +46,10 @@ gem "font-awesome-rails"
 
 gem 'colorize'
 gem 'ipaddress'
-gem 'cisco_parser', git: 'https://github.com/randybb/cisco_parser'
+gem 'cisco_parser', git: 'https://github.com/randybb/cisco_parser', branch: 'master'
 
 # MongoDB
-gem 'mongoid'
+gem 'mongoid', git: 'https://github.com/mongodb/mongoid.git', tag: 'v6.1.1'
 gem 'moped'
 
 gem 'awesome_print', group: :development
@@ -65,7 +65,7 @@ end
 
 group :development do
   # Access an IRB console on exception pages or by using <%= console %> anywhere in the code.
-  gem 'web-console', '>= 3.3.0'
+#  gem 'web-console', '>= 3.3.0'
   gem 'listen', '~> 3.0.5'
   # Spring speeds up development by keeping your application running in the background. Read more: https://github.com/rails/spring
   gem 'spring'
