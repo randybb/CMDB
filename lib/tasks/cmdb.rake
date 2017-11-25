@@ -97,7 +97,7 @@ def get_records_from_cmdb(query_class, org_id)
         cmdb_record.updated_at = Time.now
         cmdb_record.save
       when Net::HTTPRedirection then
-        puts "here: " + response['location']
+        puts "Redirected here!!!: " + response['location']
       else
         response.error!
     end

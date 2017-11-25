@@ -99,9 +99,9 @@ class Cmdb::SitesController < ApplicationController
 			d = device[:cmdb]
 				if ((d[:step] == "production") && (d[:type] == "Switch"))
 					csv << csv_mapping.map{ |key, value| d[key] }
-					unless device.file_config.nil?
+					unless device.last_configuration.nil?
 						# this needs to be moved to device.rake
-						device_config = device.file_config.gsub!(/(\r|\n)+/, "\n")
+						device_config = device.last_configuration.file.gsub!(/(\r|\n)+/, "\n")
 						parsed_device_config = CiscoParser::AOSSW.new device_config
 						
 						hostname = parsed_device_config.hostname

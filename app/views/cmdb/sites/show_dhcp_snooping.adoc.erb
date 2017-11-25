@@ -1,6 +1,6 @@
 <%# this is not the correct way how to use MVC view, but it works :) %>
 <% @devices.each do |device| %>
-    <% next unless device.cmdb[:up] == 0 && !device.file_config.nil? && device.cmdb[:brand] == 'Cisco' && device.cmdb[:type] == 'Switch' %>
+    <% next unless device.cmdb[:up] == 0 && !device.last_configuration.nil? && device.cmdb[:brand] == 'Cisco' && device.cmdb[:type] == 'Switch' %>
 
 <%= device[:name] %>
 !!
@@ -59,9 +59,9 @@ interface <%= i[:name] %>
     <% end #each   %>
 !
 ! DHCP Snooping:
-! <%= device.file_config.gsub!(/(\r|\n)+/, "\n").scan(/^ip dhcp snooping.*$/).join("\n! ") %>
+! <%= device.last_configuration.file.gsub!(/(\r|\n)+/, "\n").scan(/^ip dhcp snooping.*$/).join("\n! ") %>
 !
-    <% vlans = device.file_config.gsub!(/(\r|\n)+/, "\n").scan(/^vlan ([\d]+)$/).join(",").gsub(",1000", "") %>
+    <% vlans = device.last_configuration.file.gsub!(/(\r|\n)+/, "\n").scan(/^vlan ([\d]+)$/).join(",").gsub(",1000", "") %>
 ! VLANs: <%= vlans %>
 ip dhcp snooping vlan <%= vlans %>
 no ip dhcp snooping information option

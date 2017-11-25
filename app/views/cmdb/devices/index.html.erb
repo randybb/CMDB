@@ -45,7 +45,7 @@
         <td><%= d["ip"] %></td>
         <td><%= d["step"] %></td>
         <td>
-          <%= link_to('<span class="fa fa-file-text"></span>'.html_safe, {controller: "cmdb/devices", id: device[:_id], action: "show_configuration"}) unless device.file_config.nil? %>
+          <%= link_to('<span class="fa fa-file-text"></span>'.html_safe, {controller: "cmdb/devices", id: device[:_id], action: "show_configuration"}) unless device.last_configuration.nil? %>
           <%= link_to('<span class="fa fa-list-ol"></span>'.html_safe, {controller: "cmdb/devices", id: device[:_id], action: "show_interfaces"}) if device.device && device.device[:interfaces] %>
           <%= link_to('<span class="fa fa-tree"></span>'.html_safe, {controller: "cmdb/devices", id: device[:_id], action: "show_cdp"}) if device.device && device.device[:neighbors] && device.device[:neighbors][:cdp] %>
         </td>

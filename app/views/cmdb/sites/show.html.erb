@@ -111,7 +111,7 @@
           <%= '<span class="fa fa-fire"></span>'.html_safe if device[:scope] %>
           <% ( %><a href="rlogin://<%= d[:name] %>"><span class="fa fa-terminal"></span></a>
           <% ) unless d["ip"].nil? %>
-          <%= link_to('<span class="fa fa-file-text"></span>'.html_safe, {controller: "cmdb/devices", id: device[:infra_id], action: "show_configuration"}) unless device.file_config.nil? %>
+          <%= link_to('<span class="fa fa-file-text"></span>'.html_safe, {controller: "cmdb/devices", id: device[:infra_id], action: "show_configuration"}) unless device.last_configuration.nil? %>
           <%= link_to('<span class="fa fa-list-ol"></span>'.html_safe, {controller: "cmdb/devices", id: device[:infra_id], action: "show_interfaces"}) if device.device && device.device[:interfaces] %>
           <%= link_to('<span class="fa fa-tree"></span>'.html_safe, {controller: "cmdb/devices", id: device[:infra_id], action: "show_cdp"}) if device.device && device.device[:neighbors] && device.device[:neighbors][:cdp] %>
         </td>
@@ -142,7 +142,7 @@
           <%= '<span class="fa fa-fire"></span>'.html_safe if device[:scope] %>
           <% ( %><a href="rlogin://<%= d[:name] %>"><span class="fa fa-terminal"></span></a>
           <% ) unless d["ip"].nil? %>
-          <%= link_to('<span class="fa fa-file-text"></span>'.html_safe, {controller: "cmdb/devices", id: device[:infra_id], action: "show_configuration"}) unless device.file_config.nil? %>
+          <%= link_to('<span class="fa fa-file-text"></span>'.html_safe, {controller: "cmdb/devices", id: device[:infra_id], action: "show_configuration"}) unless device.last_configuration.nil? %>
           <%= link_to('<span class="fa fa-list-ol"></span>'.html_safe, {controller: "cmdb/devices", id: device[:infra_id], action: "show_interfaces"}) if device.device && device.device[:interfaces] %>
           <%= link_to('<span class="fa fa-tree"></span>'.html_safe, {controller: "cmdb/devices", id: device[:infra_id], action: "show_cdp"}) if device.device && device.device[:neighbors] && device.device[:neighbors][:cdp] %>
         </td>
@@ -179,7 +179,7 @@
           <%= '<span class="fa fa-fire"></span>'.html_safe if device[:scope] %>
           <% ( %><a href="rlogin://<%= d[:name] %>"><span class="fa fa-terminal"></span></a>
           <% ) unless d["ip"].nil? %>
-          <%= link_to('<span class="fa fa-file-text"></span>'.html_safe, {controller: "cmdb/devices", id: device[:infra_id], action: "show_configuration"}) unless device.file_config.nil? %>
+          <%= link_to('<span class="fa fa-file-text"></span>'.html_safe, {controller: "cmdb/devices", id: device[:infra_id], action: "show_configuration"}) unless device.last_configuration.nil? %>
           <%= link_to('<span class="fa fa-list-ol"></span>'.html_safe, {controller: "cmdb/devices", id: device[:infra_id], action: "show_interfaces"}) if device.device && device.device[:interfaces] %>
           <%= link_to('<span class="fa fa-tree"></span>'.html_safe, {controller: "cmdb/devices", id: device[:infra_id], action: "show_cdp"}) if device.device && device.device[:neighbors] && device.device[:neighbors][:cdp] %>
         </td>

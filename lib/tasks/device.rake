@@ -3,7 +3,7 @@ def clogin(ip_address, filename)
 end
 
 def hlogin(hostname, filename)
-  `ssh idajmpl02 "./hlogin-new #{hostname}" | sed "s/\r//g" | tee #{filename}`
+  `ssh idajmpl01 "./hlogin-new #{hostname}" | sed "s/\r//g" | tee #{filename}`
 end
 
 namespace :device do
@@ -11,7 +11,7 @@ namespace :device do
   task :default => [:get_configuration]
   #task :default => [:get_configuration, :parse_configuration]
 
-  desc 'Run show commands on a device and store it to Equipment.file_config'
+  desc 'Run show commands on a device and store it to Configurations (with relation)'
   task :get_configuration => :environment do |task, params|
     puts "== Downloading configurations"
     params.extras.each do |device_id|
@@ -20,34 +20,20 @@ namespace :device do
       puts "= #{device.name} (#{device.infra_id})"
       # Cisco devices
       if device.cmdb[:up] == 0 && device.cmdb[:brand] == 'Cisco' && device.cmdb[:type] == 'Switch' && device.cmdb[:step] == 'production'
-        created_at = DateTime.now.utc.to_s
         temp_file = "tmp/#{device[:name]}.txt"
-
-        device.timestamps = {} if device.timestamps.nil?
 
         clogin(device.cmdb[:real_ip], temp_file)
 
-        device_configuration = File.read(temp_file)
-        device.file_config = device_configuration
-
-        device.timestamps[:configuration] = created_at
-        device.save
+        device.configurations.create(infra_id: device.infra_id, file: File.read(temp_file))
         puts "OK"
         File.delete temp_file
       # HP/Aruba devices, or simplier "not Cisco"
       elsif (%w[Aruba HP HPE].include? device.cmdb[:brand]) && (device.cmdb[:type] == 'Switch' || device.cmdb[:type] == 'Routing Switch') && device.cmdb[:step] == 'production'
-        created_at = DateTime.now.utc.to_s
         temp_file = "tmp/#{device[:name]}.txt"
-
-        device.timestamps = {} if device.timestamps.nil?
 
         hlogin(device.cmdb[:name], temp_file)
 
-        device_configuration = File.read(temp_file)
-        device.file_config = device_configuration
-
-        device.timestamps[:configuration] = created_at
-        device.save
+        device.configurations.create(infra_id: device.infra_id, file: File.read(temp_file))
         puts "OK"
         File.delete temp_file
 	  # and other devices
@@ -58,7 +44,7 @@ namespace :device do
     end
   end
 
-  desc 'Parse Equipment.file_config and store its output output to Equipment.device'
+  desc 'Parse Equipment.last_configuration.file and store its output output to Equipment.device'
   task :parse_configuration => :environment do |task, params|
     puts "== Parsing configurations"
     params.extras.each do |device_id|
@@ -66,14 +52,14 @@ namespace :device do
       device = Equipment.where(id: device_id).first
 
       puts "= #{device.name} (#{device.id})"
-      if device.cmdb[:up] == 0 && !device.file_config.nil? && device.cmdb[:brand] == 'Cisco' && device.cmdb[:type] == 'Switch'
+      if device.cmdb[:up] == 0 && !device.last_configuration.nil? && device.cmdb[:brand] == 'Cisco' && device.cmdb[:type] == 'Switch'
         created_at = DateTime.now.utc.to_s
 
         device.device = {} if device.device.nil?
         device.device[:neighbors] = {} if device.device[:neighbors].nil?
         device.timestamps = {} if device.timestamps.nil?
 
-        device_config = device.file_config.gsub!(/(\r|\n)+/, "\n")
+        device_config = device.last_configuration.file.gsub!(/(\r|\n)+/, "\n")
 
         # TODO: add condition based on device type: Switch/Router and WLC
         parsed_device_config = CiscoParser::IOS.new device_config

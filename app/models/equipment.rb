@@ -11,4 +11,10 @@ class Equipment
   field :timestamps, type: Hash
   field :file_config, type: BSON::Code
   field :device, type: Hash
+
+  has_many :configurations
+
+  def last_configuration
+    configurations.order_by(:created_at => 'desc').first
+  end
 end

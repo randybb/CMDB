@@ -25,6 +25,10 @@ Rails.application.routes.draw do
   end
 
   namespace :cmdb do
+    get "configurations/:id" => "configurations#show"
+  end
+
+  namespace :cmdb do
     get 'interfaces' => 'interfaces#index'
     get "interfaces/:id" => "interfaces#show", :constraints => {:id => /[\w._\-]*/}
   end

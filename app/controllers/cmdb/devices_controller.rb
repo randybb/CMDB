@@ -32,7 +32,7 @@ class Cmdb::DevicesController < ApplicationController
     if device.nil?
       render file: "public/404.html", status: :not_found
     else
-      configuration = device.first.file_config #.html_safe
+      configuration = device.first.last_configuration.file #.html_safe
       render plain: configuration
     end
   end

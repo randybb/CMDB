@@ -10,7 +10,7 @@
       <small>Alias</small> <%= d[:alias_equipment] %></h4>
     <p>
       <a href="rlogin://<%= d[:name] %>"><span class="fa fa-terminal"></span> Terminal</a>
-      <%= link_to(' | <span class="fa fa-file-text"></span> Configuration'.html_safe, {controller: "cmdb/devices", id: @device[:infra_id], action: "show_configuration"}) unless @device.file_config.nil? %>
+      <%= link_to(' | <span class="fa fa-file-text"></span> Last configuration'.html_safe, {controller: "cmdb/devices", id: @device[:infra_id], action: "show_configuration"}) unless @device.last_configuration.nil? %>
       <%= link_to(' | <span class="fa fa-list-ol"></span> Show Interfaces'.html_safe, {controller: "cmdb/devices", id: @device[:infra_id], action: "show_interfaces"}) if @device.device && @device.device[:interfaces] %>
       <%= link_to(' | <span class="fa fa-tree"></span> Show CDP'.html_safe, {controller: "cmdb/devices", id: @device[:_id], action: "show_cdp"}) if @device.device && @device.device[:neighbors] && @device.device[:neighbors][:cdp] %>
     </p>
@@ -22,8 +22,8 @@
       <br/>
       <small>Updated at</small> <%= DateTime.parse(d[:lastchangedate]).to_s(:custom_short) %>
       <br/>
-      <small>Dev updated at
-      </small> <%= DateTime.parse(@device.timestamps[:configuration]).to_s(:custom_short) unless @device.timestamps.nil? %>
+      <small>Last config saved at
+      </small> <%= @device.last_configuration.created_at.to_s(:custom_short) unless @device.last_configuration.nil? %>
       <br/>
     </p>
   </div>
@@ -210,5 +210,21 @@
         <td><%= DateTime.parse(d[:last_obsolete_date]).to_s(:custom_short) %></td>
       </tr>
   <% ) unless (d[:last_obsolete_date].empty? || d[:last_obsolete_date] == "0000-00-00 00:00:00") %>
+  </tbody>
+</table>
+
+<table class="table table-striped table-condensed">
+  <caption>Saved configurations</caption>
+  <thead>
+  <tr>
+    <th>Saved at</th>
+  </tr>
+  </thead>
+
+  <tbody>
+  <% @device.configurations.each do |config| %>
+				<tr><td><%= link_to config.created_at.to_s(:custom_short), "/cmdb/configurations/#{config._id.to_s}" %>
+        </td></tr>
+  <% end %>
   </tbody>
 </table>
